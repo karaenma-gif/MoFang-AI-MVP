@@ -2180,6 +2180,9 @@
 
     .lf-dot.active { width: 20px; background: var(--accent-light); }
     .lf-dot.done { background: rgba(124,58,237,0.5); }
+
+    /* ====== ACT 5 SPINNER ====== */
+    @keyframes act5spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -3653,13 +3656,232 @@
         if (pct === 100) {
           titleEl.textContent = '安全空间配置完成！';
           hintEl.innerHTML = '<span style="color:#34D399;font-weight:600;">✓ 封号率 0% · AI 全程守护</span>';
-          // Act 4 done — placeholder for Act 5
+          setTimeout(startAct5, 1400);
           return;
         }
         setTimeout(runStep, 490 + Math.random() * 160);
       }
       setTimeout(runStep, 320);
     }
+
+    // ====== ACT 5: AI Auto-Login + Seller Dashboard ======
+
+    function startAct5() {
+      const body = document.getElementById('client-body');
+      body.style.transition = 'opacity 0.4s ease';
+      body.style.opacity = '0';
+
+      setTimeout(() => {
+        body.innerHTML = `
+          <div class="cl-browser-area" id="act5-browser">
+            <div class="cl-address-bar">
+              <div class="cl-nav-btn-sm">
+                <i data-lucide="chevron-left" style="width:13px;height:13px;opacity:0.3;"></i>
+              </div>
+              <div class="cl-nav-btn-sm">
+                <i data-lucide="chevron-right" style="width:13px;height:13px;opacity:0.3;"></i>
+              </div>
+              <div class="cl-url-bar" id="act5-url-bar">新标签页</div>
+              <div class="cl-magic-btn">
+                <i data-lucide="sparkles" style="width:10px;height:10px;"></i>
+                魔方 Chat
+              </div>
+            </div>
+            <div id="act5-content" style="flex:1;display:flex;align-items:center;justify-content:center;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+                <div style="width:28px;height:28px;border-radius:50%;border:2.5px solid rgba(255,255,255,0.07);border-top-color:#7C3AED;animation:act5spin 0.75s linear infinite;"></div>
+                <div style="font-size:12.5px;color:var(--text-dim);">连接安全空间中…</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cl-chat-side open" id="act5-chat-side">
+            <div class="cl-chat-header">
+              <div class="cl-chat-title">
+                <div class="cl-live-dot"></div>
+                魔方 AI
+              </div>
+            </div>
+            <div class="cl-messages" id="act5-messages">
+              <div class="cl-msg-label">操作日志</div>
+            </div>
+            <div class="cl-chat-input-area">
+              <div class="cl-input-row">
+                <span class="cl-input-hint">问我任何问题…</span>
+                <div class="cl-input-send">
+                  <i data-lucide="arrow-up" style="width:11px;height:11px;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        body.style.opacity = '1';
+        lucide.createIcons();
+        runAct5Sequence();
+      }, 420);
+    }
+
+    function runAct5Sequence() {
+      const msgs = document.getElementById('act5-messages');
+
+      // T=300ms: Login status card (loading state)
+      const loginCard = document.createElement('div');
+      loginCard.className = 'cl-msg-card';
+      loginCard.id = 'act5-login-card';
+      loginCard.innerHTML = `
+        <div class="cl-msg-card-title" style="color:var(--text-secondary);">
+          <div style="width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);border-top-color:#A78BFA;animation:act5spin 0.7s linear infinite;flex-shrink:0;"></div>
+          正在通过安全空间登录你的 TikTok Shop…
+        </div>
+        <div style="margin-top:4px;color:var(--text-dim);font-size:11px;">账号凭据已加密，设备指纹已隔离</div>
+      `;
+      setTimeout(() => {
+        msgs.appendChild(loginCard);
+        msgs.scrollTop = msgs.scrollHeight;
+      }, 300);
+
+      // T=2000ms: Update card to success + load dashboard
+      setTimeout(() => {
+        const card = document.getElementById('act5-login-card');
+        if (card) {
+          card.style.background = 'rgba(16,185,129,0.07)';
+          card.style.borderColor = 'rgba(16,185,129,0.18)';
+          card.innerHTML = `
+            <div class="cl-msg-card-title">
+              <i data-lucide="check-circle" style="width:12px;height:12px;color:#34D399;"></i>
+              登录成功 ✓
+            </div>
+            <div style="margin-top:4px;color:var(--text-dim);font-size:11px;">已安全连接至 TikTok Shop 卖家中心</div>
+          `;
+          lucide.createIcons({ nodes: [card] });
+        }
+
+        // Animate URL bar to seller.tiktok.com
+        const urlBar = document.getElementById('act5-url-bar');
+        if (urlBar) urlBar.textContent = 'seller.tiktok.com/dashboard';
+
+        // Load dashboard
+        loadTikTokDashboard();
+      }, 2000);
+
+      // T=3400ms: AI greeting
+      setTimeout(() => {
+        const el = buildMsgEl({ type: 'ai', text: '你好潼潼，我是你的AI运营搭档 🙂' });
+        msgs.appendChild(el);
+        msgs.scrollTop = msgs.scrollHeight;
+      }, 3400);
+
+      // T=4700ms: AI second message
+      setTimeout(() => {
+        const el = buildMsgEl({ type: 'ai', text: '我注意到你的店铺还没有出过单，先来看看今天有什么机会？' });
+        msgs.appendChild(el);
+        msgs.scrollTop = msgs.scrollHeight;
+      }, 4700);
+    }
+
+    function loadTikTokDashboard() {
+      const content = document.getElementById('act5-content');
+      if (!content) return;
+
+      content.style.transition = 'opacity 0.3s ease';
+      content.style.opacity = '0';
+
+      setTimeout(() => {
+        content.style.alignItems = '';
+        content.style.justifyContent = '';
+        content.innerHTML = `
+          <div style="display:flex;width:100%;height:100%;overflow:hidden;">
+            <!-- Sidebar -->
+            <div style="width:172px;background:rgba(10,10,14,0.8);border-right:1px solid rgba(255,255,255,0.05);padding:14px 10px;flex-shrink:0;display:flex;flex-direction:column;">
+              <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;margin-bottom:14px;">
+                <div style="width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#FF0050,#25F4EE);flex-shrink:0;"></div>
+                <span style="font-size:13px;font-weight:700;color:var(--text-primary);">卖家中心</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:12px;font-weight:500;background:rgba(124,58,237,0.14);color:var(--text-primary);border:1px solid rgba(124,58,237,0.2);margin-bottom:2px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-light);box-shadow:0 0 6px var(--accent-light);flex-shrink:0;"></div>
+                数据概览
+              </div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:12px;color:var(--text-dim);margin-bottom:2px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.15);flex-shrink:0;"></div>
+                商品管理
+              </div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:12px;color:var(--text-dim);margin-bottom:2px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.15);flex-shrink:0;"></div>
+                订单管理
+              </div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:12px;color:var(--text-dim);margin-bottom:2px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.15);flex-shrink:0;"></div>
+                达人合作
+              </div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:12px;color:var(--text-dim);">
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.15);flex-shrink:0;"></div>
+                数据分析
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);margin:10px 8px;"></div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;font-size:12px;color:#34D399;">
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(16,185,129,0.6);box-shadow:0 0 5px rgba(16,185,129,0.4);flex-shrink:0;"></div>
+                安全空间 ✓
+              </div>
+            </div>
+
+            <!-- Main content -->
+            <div style="flex:1;padding:20px 22px;overflow:hidden;display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:14px;font-weight:700;color:var(--text-primary);">本周数据概览</div>
+                <div style="display:flex;gap:6px;">
+                  <span style="padding:3px 8px;border-radius:5px;font-size:10.5px;font-weight:600;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.25);color:#34D399;">安全运行中</span>
+                  <span style="padding:3px 8px;border-radius:5px;font-size:10.5px;font-weight:600;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text-dim);">北美站</span>
+                </div>
+              </div>
+
+              <!-- Stats row -->
+              <div style="display:flex;gap:10px;">
+                <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:9px;padding:11px 13px;">
+                  <div style="font-size:20px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;line-height:1.1;">$0</div>
+                  <div style="font-size:10.5px;color:var(--text-dim);margin-top:3px;">本周 GMV</div>
+                  <div style="font-size:10.5px;font-weight:600;color:var(--text-dim);">等待第一单</div>
+                </div>
+                <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:9px;padding:11px 13px;">
+                  <div style="font-size:20px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;line-height:1.1;">0</div>
+                  <div style="font-size:10.5px;color:var(--text-dim);margin-top:3px;">成交订单</div>
+                  <div style="font-size:10.5px;font-weight:600;color:var(--text-dim);">还未出单</div>
+                </div>
+                <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:9px;padding:11px 13px;">
+                  <div style="font-size:20px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;line-height:1.1;">2</div>
+                  <div style="font-size:10.5px;color:var(--text-dim);margin-top:3px;">在架商品</div>
+                  <div style="font-size:10.5px;font-weight:600;color:rgba(252,211,77,0.8);">待优化</div>
+                </div>
+              </div>
+
+              <!-- Nudge card -->
+              <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;">
+                <div style="width:36px;height:36px;border-radius:10px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+                  <i data-lucide="alert-circle" style="width:16px;height:16px;color:#FCD34D;"></i>
+                </div>
+                <div>
+                  <div style="font-size:12.5px;font-weight:600;color:var(--text-primary);margin-bottom:3px;">暂无销售数据</div>
+                  <div style="font-size:11.5px;color:var(--text-dim);line-height:1.6;">你的店铺已开业 6 周，尚未产生订单。<br>让 AI 帮你找到第一个爆品和突破口。</div>
+                </div>
+              </div>
+
+              <!-- Empty orders placeholder -->
+              <div style="flex:1;background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.04);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                <div style="text-align:center;">
+                  <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">
+                    <i data-lucide="inbox" style="width:16px;height:16px;color:var(--text-dim);"></i>
+                  </div>
+                  <div style="font-size:12px;color:var(--text-dim);">订单列表为空</div>
+                  <div style="font-size:11px;color:var(--text-dim);opacity:0.5;margin-top:4px;">AI 正在为你分析今天的机会</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        content.style.opacity = '1';
+        lucide.createIcons({ nodes: [content] });
+      }, 320);
+    }
+
   </script>
 </body>
 </html>
