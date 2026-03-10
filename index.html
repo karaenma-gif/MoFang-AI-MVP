@@ -2183,6 +2183,12 @@
 
     /* ====== ACT 5 SPINNER ====== */
     @keyframes act5spin { to { transform: rotate(360deg); } }
+
+    /* ====== ACT 6 SCAN SWEEP ====== */
+    @keyframes scanLine {
+      0%   { left: -60%; }
+      100% { left: 110%; }
+    }
   </style>
 </head>
 <body>
@@ -3777,6 +3783,9 @@
         msgs.appendChild(el);
         msgs.scrollTop = msgs.scrollHeight;
       }, 4700);
+
+      // T=6000ms: Act 6 Step 1
+      setTimeout(startAct6Step1, 6000);
     }
 
     function loadTikTokDashboard() {
@@ -3880,6 +3889,220 @@
         content.style.opacity = '1';
         lucide.createIcons({ nodes: [content] });
       }, 320);
+    }
+
+    // ====== ACT 6 STEP 1: 惊喜一 · 智能选品 ======
+
+    function startAct6Step1() {
+      const msgs = document.getElementById('act5-messages');
+
+      // AI opens: "I found an opportunity"
+      if (msgs) {
+        const el = buildMsgEl({ type: 'ai', text: '我扫描了本周北美市场，发现一个机会 👀' });
+        msgs.appendChild(el);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      // After brief pause, transform browser area into scan state
+      setTimeout(() => {
+        const content = document.getElementById('act5-content');
+        if (!content) return;
+
+        content.style.transition = 'opacity 0.4s ease';
+        content.style.opacity = '0';
+
+        setTimeout(() => {
+          // Reset container — children will fill it column-wise
+          content.style.cssText = 'flex:1;display:flex;overflow:hidden;';
+          content.innerHTML = `
+            <div id="act6-scan-state" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:32px;gap:18px;position:relative;overflow:hidden;">
+              <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(124,58,237,0.13) 1px,transparent 1px);background-size:24px 24px;pointer-events:none;"></div>
+              <div style="position:absolute;top:0;left:-60%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(167,139,250,0.05),rgba(167,139,250,0.14),rgba(167,139,250,0.05),transparent);animation:scanLine 2s linear infinite;pointer-events:none;"></div>
+              <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;">
+                <div style="font-size:10.5px;font-weight:700;color:var(--accent-light);letter-spacing:1.4px;text-transform:uppercase;">AI 市场扫描中</div>
+                <div style="display:flex;align-items:center;gap:32px;">
+                  <div style="text-align:center;">
+                    <div id="act6-m1" style="font-size:28px;font-weight:800;color:var(--text-primary);letter-spacing:-1.5px;line-height:1;font-variant-numeric:tabular-nums;">0</div>
+                    <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">类目扫描</div>
+                  </div>
+                  <div style="width:1px;height:36px;background:rgba(255,255,255,0.07);"></div>
+                  <div style="text-align:center;">
+                    <div id="act6-m2" style="font-size:28px;font-weight:800;color:var(--text-primary);letter-spacing:-1.5px;line-height:1;font-variant-numeric:tabular-nums;">0</div>
+                    <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">SKU 对比</div>
+                  </div>
+                  <div style="width:1px;height:36px;background:rgba(255,255,255,0.07);"></div>
+                  <div style="text-align:center;">
+                    <div id="act6-m3" style="font-size:28px;font-weight:800;color:var(--text-primary);letter-spacing:-1.5px;line-height:1;font-variant-numeric:tabular-nums;">0</div>
+                    <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">价格数据点</div>
+                  </div>
+                </div>
+                <div style="width:260px;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;">
+                  <div id="act6-scan-bar" style="height:100%;background:linear-gradient(90deg,#7C3AED,#A78BFA);width:0%;border-radius:2px;"></div>
+                </div>
+                <div id="act6-scan-label" style="font-size:11px;color:var(--text-dim);">正在分析北美市场数据…</div>
+              </div>
+            </div>
+
+            <div id="act6-results" style="display:none;flex:1;flex-direction:column;padding:16px 18px;gap:11px;overflow:hidden;">
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+                <div>
+                  <div style="font-size:13.5px;font-weight:700;color:var(--text-primary);">AI 选品推荐</div>
+                  <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">基于北美市场实时数据 · 3 款高利润爆品</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;padding:4px 11px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.22);border-radius:8px;flex-shrink:0;">
+                  <span style="font-size:12px;">🔥</span>
+                  <span style="font-size:11px;font-weight:700;color:#F87171;">厨房收纳 热度 ↑37%</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;flex:1;min-height:0;">
+
+                <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:8px;min-width:0;">
+                  <div style="font-size:30px;text-align:center;line-height:1;padding:6px 0;">🥣</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text-primary);line-height:1.4;">可折叠硅胶碗</div>
+                  <div style="font-size:14px;font-weight:800;color:var(--accent-light);">$16.99</div>
+                  <div style="font-size:10.5px;color:var(--text-dim);line-height:1.75;flex:1;">竞品均价 <span style="color:var(--text-secondary);font-weight:600;">$22</span><br>月销 2,800+<br>利润 <span style="color:#34D399;font-weight:600;">$5–7</span></div>
+                  <button onclick="act6SelectProduct(1,'可折叠硅胶碗')" class="act6-pick-btn" style="width:100%;padding:7px 0;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:11.5px;font-weight:600;color:var(--text-secondary);cursor:pointer;">我要选这个</button>
+                </div>
+
+                <div id="act6-card-rec" style="flex:1;background:rgba(124,58,237,0.08);border:1.5px solid rgba(124,58,237,0.38);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:8px;min-width:0;position:relative;">
+                  <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);padding:2px 10px;background:linear-gradient(135deg,#7C3AED,#5B21B6);border-radius:0 0 8px 8px;font-size:9.5px;font-weight:700;color:white;letter-spacing:0.5px;white-space:nowrap;">AI 推荐</div>
+                  <div style="font-size:30px;text-align:center;line-height:1;padding:6px 0;">🧲</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text-primary);line-height:1.4;">磁吸调料架</div>
+                  <div style="font-size:14px;font-weight:800;color:var(--accent-light);">$19.99</div>
+                  <div style="font-size:10.5px;color:var(--text-dim);line-height:1.75;flex:1;">竞品均价 <span style="color:var(--text-secondary);font-weight:600;">$26</span><br>月销 3,500+<br>利润 <span style="color:#34D399;font-weight:600;">$7–10</span></div>
+                  <button onclick="act6SelectProduct(2,'磁吸调料架')" class="act6-pick-btn" style="width:100%;padding:8px 0;background:linear-gradient(135deg,#7C3AED,#5B21B6);border:1px solid rgba(167,139,250,0.35);border-radius:8px;font-size:11.5px;font-weight:700;color:white;cursor:pointer;box-shadow:0 3px 12px rgba(124,58,237,0.35);">我要选这个</button>
+                </div>
+
+                <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:8px;min-width:0;">
+                  <div style="font-size:30px;text-align:center;line-height:1;padding:6px 0;">🗂️</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text-primary);line-height:1.4;">旋转收纳盒</div>
+                  <div style="font-size:14px;font-weight:800;color:var(--accent-light);">$24.99</div>
+                  <div style="font-size:10.5px;color:var(--text-dim);line-height:1.75;flex:1;">竞品均价 <span style="color:var(--text-secondary);font-weight:600;">$32</span><br>月销 2,200+<br>利润 <span style="color:#34D399;font-weight:600;">$6–9</span></div>
+                  <button onclick="act6SelectProduct(3,'旋转收纳盒')" class="act6-pick-btn" style="width:100%;padding:7px 0;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:11.5px;font-weight:600;color:var(--text-secondary);cursor:pointer;">我要选这个</button>
+                </div>
+
+              </div>
+            </div>
+          `;
+          content.style.transition = 'opacity 0.4s ease';
+          content.style.opacity = '0';
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            content.style.opacity = '1';
+            runAct6Scan();
+          }));
+        }, 420);
+      }, 900);
+    }
+
+    function runAct6Scan() {
+      const bar    = document.getElementById('act6-scan-bar');
+      const label  = document.getElementById('act6-scan-label');
+      const m1el   = document.getElementById('act6-m1');
+      const m2el   = document.getElementById('act6-m2');
+      const m3el   = document.getElementById('act6-m3');
+      if (!bar) return;
+
+      const duration = 2800;
+      const startTs  = performance.now();
+      const labels   = [
+        '正在分析北美市场数据…',
+        '扫描热门类目趋势…',
+        '对比竞品价格与利润…',
+        '锁定高潜力 SKU…'
+      ];
+      let labelIdx = 0;
+
+      function frame(now) {
+        const t    = Math.min((now - startTs) / duration, 1);
+        const ease = 1 - Math.pow(1 - t, 2); // ease-out quad
+
+        bar.style.width = (ease * 100) + '%';
+        if (m1el) m1el.textContent = Math.floor(ease * 142);
+        if (m2el) m2el.textContent = Math.floor(ease * 2847).toLocaleString();
+        if (m3el) m3el.textContent = Math.floor(ease * 18360).toLocaleString();
+
+        const newIdx = Math.min(Math.floor(t * labels.length), labels.length - 1);
+        if (newIdx !== labelIdx) { labelIdx = newIdx; if (label) label.textContent = labels[labelIdx]; }
+
+        if (t < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          bar.style.width = '100%';
+          if (m1el) m1el.textContent = '142';
+          if (m2el) m2el.textContent = '2,847';
+          if (m3el) m3el.textContent = '18,360';
+          if (label) label.textContent = '扫描完成 ✓';
+          setTimeout(showAct6Products, 600);
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    function showAct6Products() {
+      const scanEl   = document.getElementById('act6-scan-state');
+      const results  = document.getElementById('act6-results');
+      if (!scanEl || !results) return;
+
+      scanEl.style.transition = 'opacity 0.35s ease';
+      scanEl.style.opacity    = '0';
+
+      setTimeout(() => {
+        scanEl.style.display  = 'none';
+        results.style.display = 'flex';
+        results.style.opacity = '0';
+        results.style.transition = 'opacity 0.4s ease';
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          results.style.opacity = '1';
+        }));
+
+        // AI delivers findings
+        const msgs = document.getElementById('act5-messages');
+        if (msgs) {
+          const el = buildMsgEl({ type: 'ai', text: '「厨房收纳」类目热度本周上升 <strong style="color:#A78BFA;">37%</strong>，北美市场需求缺口明显 🎯 为你精选了 3 款高利润 SKU，点击「我要选这个」锁定你的爆品！' });
+          msgs.appendChild(el);
+          msgs.scrollTop = msgs.scrollHeight;
+        }
+      }, 360);
+    }
+
+    function act6SelectProduct(idx, name) {
+      // Disable all pick buttons
+      document.querySelectorAll('.act6-pick-btn').forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.4';
+        btn.style.cursor  = 'default';
+      });
+
+      // Dim non-selected cards
+      const cards = document.querySelectorAll('#act6-results > div:last-child > div');
+      cards.forEach((card, i) => {
+        if (i + 1 !== idx) {
+          card.style.transition = 'opacity 0.3s ease';
+          card.style.opacity    = '0.35';
+        }
+      });
+
+      const msgs = document.getElementById('act5-messages');
+      if (!msgs) return;
+
+      // User "sends" the selection
+      const userEl = buildMsgEl({ type: 'user', text: '我要选这个' });
+      msgs.appendChild(userEl);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      // AI confirmation card
+      setTimeout(() => {
+        const aiEl = buildMsgEl({
+          type: 'card', icon: 'check-circle', iconColor: '#34D399',
+          title: name + ' 已锁定 ✓',
+          lines: [
+            '已记录选品决策，开始匹配推广资源',
+            '接下来帮你找到合适的达人来推这款产品 👇'
+          ]
+        });
+        msgs.appendChild(aiEl);
+        msgs.scrollTop = msgs.scrollHeight;
+      }, 700);
     }
 
   </script>
