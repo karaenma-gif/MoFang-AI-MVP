@@ -1269,6 +1269,332 @@
       margin-left: 8px;
     }
 
+    /* ====== CLIENT MAIN BODY (Act 2+) ====== */
+    #client-body {
+      display: none;
+      height: calc(100% - 42px);
+      flex-direction: row;
+    }
+
+    .cl-browser-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .cl-address-bar {
+      height: 40px;
+      background: rgba(15,15,20,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .cl-nav-btn-sm {
+      width: 24px; height: 24px;
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-dim);
+    }
+
+    .cl-url-bar {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      font-family: 'SF Mono', 'Menlo', monospace;
+    }
+
+    .cl-magic-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      background: rgba(124,58,237,0.18);
+      border: 1px solid rgba(124,58,237,0.32);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-light);
+      white-space: nowrap;
+    }
+
+    /* New tab page */
+    .cl-newtab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 40px;
+      overflow: hidden;
+    }
+
+    .cl-newtab-brand {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.3px;
+      margin-bottom: 18px;
+    }
+
+    .cl-search-wrap {
+      width: 100%;
+      max-width: 540px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 28px;
+      cursor: text;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .cl-search-wrap:hover {
+      border-color: rgba(124,58,237,0.4);
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+    }
+
+    .cl-search-icon { color: var(--text-dim); flex-shrink: 0; }
+
+    .cl-search-placeholder {
+      font-size: 14.5px;
+      color: var(--text-dim);
+      flex: 1;
+    }
+
+    /* Feature cards */
+    .cl-cards-grid {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 540px;
+    }
+
+    .cl-feature-card {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 13px 12px 11px;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .cl-feature-card:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    .cl-feature-card.active {
+      background: rgba(124,58,237,0.12);
+      border-color: rgba(124,58,237,0.38);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(124,58,237,0.2);
+    }
+
+    .cl-card-icon {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .cl-card-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .cl-card-desc {
+      font-size: 10px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* AI chat panel */
+    .cl-chat-side {
+      width: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: rgba(8,8,12,0.8);
+      transition: width 0.38s cubic-bezier(0.16,1,0.3,1);
+      flex-shrink: 0;
+    }
+
+    .cl-chat-side.open {
+      width: 30%;
+      border-left: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .cl-chat-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .cl-chat-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .cl-live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #34D399;
+      box-shadow: 0 0 6px #34D399;
+    }
+
+    .cl-messages {
+      flex: 1;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-width: 200px;
+    }
+
+    .cl-msg-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 2px;
+    }
+
+    .cl-msg-ai {
+      background: rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.2);
+      border-radius: 10px 10px 10px 2px;
+      padding: 10px 11px;
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--text-primary);
+      animation: fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .cl-msg-user {
+      align-self: flex-end;
+      background: rgba(124,58,237,0.22);
+      border: 1px solid rgba(124,58,237,0.35);
+      border-radius: 10px 10px 2px 10px;
+      padding: 9px 11px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      animation: fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .cl-msg-card {
+      background: rgba(16,185,129,0.07);
+      border: 1px solid rgba(16,185,129,0.18);
+      border-radius: 9px;
+      padding: 10px 11px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      animation: fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .cl-msg-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #34D399;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cl-chat-input-area {
+      padding: 10px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      flex-shrink: 0;
+    }
+
+    .cl-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 9px;
+      padding: 7px 10px;
+    }
+
+    .cl-input-hint {
+      flex: 1;
+      font-size: 11.5px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cl-input-send {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    /* Setup progress screen */
+    #setup-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      text-align: center;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .setup-progress-track {
+      width: 100%;
+      background: rgba(255,255,255,0.07);
+      border-radius: 4px;
+      height: 4px;
+      overflow: hidden;
+    }
+
+    #setup-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #7C3AED, #A78BFA);
+      width: 0%;
+      border-radius: 4px;
+      transition: width 0.45s cubic-bezier(0.16,1,0.3,1);
+    }
+
     /* ====== LOGIN FLOW ====== */
     #login-flow {
       display: flex;
@@ -2272,6 +2598,102 @@
       </div>
 
     </div><!-- /login-flow -->
+
+    <!-- Main Client Interface (Act 2+) -->
+    <div id="client-body">
+
+      <!-- Browser area (70%) -->
+      <div class="cl-browser-area">
+
+        <!-- Address bar -->
+        <div class="cl-address-bar">
+          <div class="cl-nav-btn-sm">
+            <i data-lucide="chevron-left" style="width:13px;height:13px;opacity:0.3;"></i>
+          </div>
+          <div class="cl-nav-btn-sm">
+            <i data-lucide="chevron-right" style="width:13px;height:13px;opacity:0.3;"></i>
+          </div>
+          <div class="cl-url-bar">新标签页</div>
+          <div class="cl-magic-btn">
+            <i data-lucide="sparkles" style="width:10px;height:10px;"></i>
+            魔方 Chat
+          </div>
+        </div>
+
+        <!-- New tab page -->
+        <div class="cl-newtab">
+          <div class="cl-newtab-brand">跨境电商经营大脑 · 魔方AI</div>
+          <div class="cl-search-wrap">
+            <i data-lucide="search" style="width:16px;height:16px;" class="cl-search-icon"></i>
+            <span class="cl-search-placeholder">你想优化哪些内容呢？</span>
+          </div>
+          <div class="cl-cards-grid">
+
+            <!-- 创建安全空间 -->
+            <div class="cl-feature-card" id="card-security" onclick="openChat(event,'security')">
+              <div class="cl-card-icon" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.25);">
+                <i data-lucide="shield-check" style="width:14px;height:14px;color:#34D399;"></i>
+              </div>
+              <div class="cl-card-name">创建安全空间</div>
+              <div class="cl-card-desc">账号隔离，永不被<br>平台关联检测</div>
+            </div>
+
+            <!-- 智能选品 -->
+            <div class="cl-feature-card" id="card-products" onclick="openChat(event,'products')">
+              <div class="cl-card-icon" style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.25);">
+                <i data-lucide="trending-up" style="width:14px;height:14px;color:#A78BFA;"></i>
+              </div>
+              <div class="cl-card-name">智能选品</div>
+              <div class="cl-card-desc">AI 锁定热度上升<br>高利润爆品 SKU</div>
+            </div>
+
+            <!-- 达人获客 -->
+            <div class="cl-feature-card" id="card-kol" onclick="openChat(event,'kol')">
+              <div class="cl-card-icon" style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.25);">
+                <i data-lucide="users" style="width:14px;height:14px;color:#93C5FD;"></i>
+              </div>
+              <div class="cl-card-name">达人获客</div>
+              <div class="cl-card-desc">匹配垂类小达人<br>转化率高 3 倍</div>
+            </div>
+
+            <!-- 内容生成 -->
+            <div class="cl-feature-card" id="card-content" onclick="openChat(event,'content')">
+              <div class="cl-card-icon" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.25);">
+                <i data-lucide="film" style="width:14px;height:14px;color:#FCD34D;"></i>
+              </div>
+              <div class="cl-card-name">内容生成</div>
+              <div class="cl-card-desc">视频脚本·图文<br>多语种一键生成</div>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /cl-browser-area -->
+
+      <!-- AI Chat panel (slides in on card click) -->
+      <div class="cl-chat-side" id="cl-chat-side">
+        <div class="cl-chat-header">
+          <div class="cl-chat-title">
+            <div class="cl-live-dot"></div>
+            魔方 AI
+          </div>
+          <i data-lucide="x" style="width:13px;height:13px;color:var(--text-dim);cursor:pointer;" onclick="closeChat()"></i>
+        </div>
+        <div class="cl-messages" id="cl-messages">
+          <div class="cl-msg-label">今日对话</div>
+        </div>
+        <div class="cl-chat-input-area">
+          <div class="cl-input-row">
+            <span class="cl-input-hint" id="cl-input-hint">问我任何问题…</span>
+            <div class="cl-input-send">
+              <i data-lucide="arrow-up" style="width:11px;height:11px;"></i>
+            </div>
+          </div>
+        </div>
+      </div><!-- /cl-chat-side -->
+
+    </div><!-- /client-body -->
+
   </div><!-- /client -->
 
   <script>
@@ -2546,33 +2968,167 @@
       flow.style.opacity    = '0';
 
       setTimeout(() => {
-        // Act 2 placeholder — will be replaced in next phase
+        // Show animated setup screen
         flow.innerHTML = `
-          <div style="display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;">
-            <div style="width:60px;height:60px;border-radius:50%;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);display:flex;align-items:center;justify-content:center;">
-              <svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='#A78BFA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>
+          <div id="setup-screen">
+            <div style="width:58px;height:58px;border-radius:50%;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);display:flex;align-items:center;justify-content:center;">
+              <svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='#A78BFA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>
             </div>
             <div>
-              <div style="font-size:18px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;margin-bottom:6px;">正在配置你的安全空间…</div>
-              <div style="font-size:13.5px;color:var(--text-secondary);line-height:1.7;">AI 正在初始化专属隔离环境<br>账号永远不会被平台关联</div>
+              <div id="setup-title" style="font-size:18px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;margin-bottom:6px;">正在配置安全空间…</div>
+              <div id="setup-steps" style="font-size:13px;color:var(--text-secondary);line-height:1.7;">初始化中…</div>
             </div>
-            <div style="display:flex;gap:6px;margin-top:4px;">
-              <div style="width:8px;height:8px;border-radius:50%;background:#A78BFA;animation:pulse 1.4s infinite 0s;"></div>
-              <div style="width:8px;height:8px;border-radius:50%;background:#A78BFA;animation:pulse 1.4s infinite 0.2s;"></div>
-              <div style="width:8px;height:8px;border-radius:50%;background:#A78BFA;animation:pulse 1.4s infinite 0.4s;"></div>
+            <div class="setup-progress-track">
+              <div id="setup-bar"></div>
             </div>
+            <div id="setup-hint" style="font-size:11px;color:var(--text-dim);">账号永远不会被平台关联</div>
           </div>
         `;
-        // Add pulse animation if not already defined
-        if (!document.getElementById('pulse-style')) {
-          const s = document.createElement('style');
-          s.id = 'pulse-style';
-          s.textContent = '@keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }';
-          document.head.appendChild(s);
-        }
         flow.style.opacity = '1';
-        lucide.createIcons();
+
+        // Step-by-step progress animation
+        const steps = [
+          [18,  '初始化浏览器隔离层…'],
+          [36,  '配置独立网络环境…'],
+          [54,  '加密存储账号数据…'],
+          [72,  '同步 Chrome 浏览器数据…'],
+          [90,  '校验安全空间完整性…'],
+          [100, '安全空间已就绪 ✓'],
+        ];
+        const bar      = document.getElementById('setup-bar');
+        const stepsEl  = document.getElementById('setup-steps');
+        const titleEl  = document.getElementById('setup-title');
+
+        let i = 0;
+        function runStep() {
+          if (i >= steps.length) return;
+          const [pct, text] = steps[i++];
+          bar.style.width  = pct + '%';
+          stepsEl.textContent = text;
+          if (pct === 100) {
+            titleEl.textContent = '安全空间配置完成！';
+            setTimeout(showMainInterface, 900);
+            return;
+          }
+          setTimeout(runStep, 480 + Math.random() * 160);
+        }
+        setTimeout(runStep, 300);
       }, 400);
+    }
+
+    function showMainInterface() {
+      const flow = document.getElementById('login-flow');
+      const body = document.getElementById('client-body');
+
+      flow.style.transition = 'opacity 0.4s';
+      flow.style.opacity    = '0';
+
+      setTimeout(() => {
+        flow.style.display  = 'none';
+        body.style.display  = 'flex';
+        body.style.opacity  = '0';
+        body.style.transition = 'opacity 0.45s';
+        lucide.createIcons();
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => { body.style.opacity = '1'; });
+        });
+      }, 420);
+    }
+
+    // ====== ACT 2: New tab page chat interactions ======
+
+    const chatData = {
+      security: {
+        input: '帮我创建一个安全空间',
+        messages: [
+          { type: 'ai',   text: '正在为你初始化独立安全空间…\n已配置隔离浏览器环境，所有操作均在独立沙箱中进行，平台无法通过 IP、Canvas 指纹或 Cookie 关联你的账号。' },
+          { type: 'user', text: '我之前的 Chrome 数据导入了吗？' },
+          { type: 'card', title: '安全空间已就绪', icon: 'shield-check', iconColor: '#34D399',
+            lines: ['✓ Google Chrome · 3 个账号已迁移', '✓ 42 条书签已同步', '✓ Cookie 加密存储，原浏览器不受影响', '账号封号风险：<span style="color:#34D399;font-weight:600;">极低</span>'] }
+        ]
+      },
+      products: {
+        input: '帮我分析本周热门选品',
+        messages: [
+          { type: 'ai',   text: '潼潼，检测到「厨房收纳」类目热度本周上升 <strong style="color:#A78BFA;">37%</strong>，北美市场需求缺口明显。已为你锁定 3 个高性价比 SKU，要查看选品报告吗？' },
+          { type: 'user', text: '好的，帮我分析第一个' },
+          { type: 'card', title: '选品分析报告', icon: 'bar-chart-2', iconColor: '#34D399',
+            lines: ['📦 多功能厨房置物架 · 伸缩调节款', '竞争指数 <span style="color:#FCD34D;font-weight:600;">中等</span> · 利润空间 <span style="color:#34D399;font-weight:600;">$6–9</span>', '月销 4,200+ · 竞品均价 $24', '推荐 12 位垂类达人，转化率高于大V 3 倍'] }
+        ]
+      },
+      kol: {
+        input: '帮我匹配合适的达人',
+        messages: [
+          { type: 'ai',   text: '基于你的厨房收纳产品，已匹配 <strong style="color:#A78BFA;">12 位</strong>垂类小达人（粉丝 1–10万）。小达人内容更垂直，转化率比头部大V高 <strong style="color:#A78BFA;">3 倍</strong>。要起草合作邀约吗？' },
+          { type: 'user', text: '帮我发合作邀约给前 3 位' },
+          { type: 'card', title: '合作邀约已发送', icon: 'send', iconColor: '#93C5FD',
+            lines: ['① @KitchenLife_US · 粉丝 8.2 万', '② @HomeOrganize · 粉丝 5.6 万', '③ @TidyQueen · 粉丝 3.1 万', '预计 48h 回复率 <span style="color:#34D399;font-weight:600;">~41%</span>'] }
+        ]
+      },
+      content: {
+        input: '帮我生成商品视频脚本',
+        messages: [
+          { type: 'ai',   text: '根据「多功能厨房置物架」，已生成 <strong style="color:#A78BFA;">3 条</strong>视频脚本，每条针对不同用户痛点，时长 15–30 秒，适配 TikTok 短视频格式。' },
+          { type: 'user', text: '看第一条脚本' },
+          { type: 'card', title: '脚本一：厨房乱？5 秒变整洁！', icon: 'film', iconColor: '#FCD34D',
+            lines: ['🎬 开场：厨房凌乱对比画面（2s）', '📦 展示：置物架秒变整洁（8s）', '💬 配音：「家人说我变整洁了」', '预估完播率 <span style="color:#34D399;font-weight:600;">68%</span> · 适合开屏广告'] }
+        ]
+      }
+    };
+
+    function openChat(e, feature) {
+      // Highlight active card
+      document.querySelectorAll('.cl-feature-card').forEach(c => c.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+
+      const data = chatData[feature];
+      if (!data) return;
+
+      document.getElementById('cl-input-hint').textContent = data.input;
+
+      // Open panel
+      document.getElementById('cl-chat-side').classList.add('open');
+
+      // Render messages with staggered delays
+      const container = document.getElementById('cl-messages');
+      container.innerHTML = '<div class="cl-msg-label">今日对话</div>';
+
+      let delay = 0;
+      data.messages.forEach((msg, i) => {
+        delay += i === 0 ? 250 : 650;
+        setTimeout(() => {
+          const el = buildMsgEl(msg);
+          container.appendChild(el);
+          lucide.createIcons({ nodes: [el] });
+          container.scrollTop = container.scrollHeight;
+        }, delay);
+      });
+    }
+
+    function closeChat() {
+      document.getElementById('cl-chat-side').classList.remove('open');
+      document.querySelectorAll('.cl-feature-card').forEach(c => c.classList.remove('active'));
+    }
+
+    function buildMsgEl(msg) {
+      const el = document.createElement('div');
+      if (msg.type === 'ai') {
+        el.className = 'cl-msg-ai';
+        el.innerHTML = msg.text.replace(/\n/g, '<br>');
+      } else if (msg.type === 'user') {
+        el.className = 'cl-msg-user';
+        el.textContent = msg.text;
+      } else if (msg.type === 'card') {
+        el.className = 'cl-msg-card';
+        el.innerHTML = `
+          <div class="cl-msg-card-title">
+            <i data-lucide="${msg.icon}" style="width:12px;height:12px;color:${msg.iconColor};"></i>
+            ${msg.title}
+          </div>
+          ${msg.lines.map(l => `<div style="margin-top:4px;color:var(--text-dim);">${l}</div>`).join('')}
+        `;
+      }
+      return el;
     }
   </script>
 </body>
