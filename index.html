@@ -1116,12 +1116,459 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    /* ====== WEBSITE WRAP ====== */
+    #website-wrap {
+      transition: filter 0.55s ease;
+    }
+    #website-wrap.blurred {
+      filter: blur(5px) saturate(0.7);
+    }
+
+    /* ====== DOWNLOAD LAYER ====== */
+    #dl-layer {
+      display: none;
+      position: fixed;
+      z-index: 300;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    #dl-icon {
+      position: absolute;
+      width: 52px; height: 52px;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .safari-icon-inner {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #1C9BF0 0%, #0066CC 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 20px rgba(0,100,200,0.55), inset 0 1px 0 rgba(255,255,255,0.3);
+    }
+
+    #dl-toast {
+      position: fixed;
+      right: 28px; bottom: 28px;
+      background: rgba(17,18,19,0.88);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 14px 16px;
+      width: 264px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+      display: none;
+      z-index: 310;
+      pointer-events: none;
+    }
+
+    .dl-toast-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .dl-toast-app-icon {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      background: linear-gradient(145deg, #1C9BF0, #0066CC);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .dl-toast-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .dl-toast-size {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    .dl-progress-track {
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .dl-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #7C3AED, #A78BFA);
+      width: 0%;
+      transition: width 0.08s linear;
+    }
+
+    .dl-toast-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 10.5px;
+      color: var(--text-dim);
+    }
+
+    /* ====== CLIENT OVERLAY ====== */
+    #client {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(calc(-50% + 44vw), calc(-50% + 44vh)) scale(0.04);
+      width: min(1100px, 94vw);
+      height: min(720px, 88vh);
+      background: rgba(11, 11, 15, 0.92);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.06),
+        0 40px 100px rgba(0,0,0,0.9),
+        0 0 120px rgba(124,58,237,0.18);
+      z-index: 500;
+      overflow: hidden;
+      transition: transform 0.62s cubic-bezier(0.34, 1.4, 0.64, 1),
+                  opacity 0.35s ease;
+      opacity: 0;
+    }
+
+    #client.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    .cl-titlebar {
+      height: 42px;
+      background: rgba(20,20,26,0.98);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .cl-traffic { display: flex; gap: 6px; }
+    .cl-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .cl-dot-r { background: #FF5F57; }
+    .cl-dot-y { background: #FEBC2E; }
+    .cl-dot-g { background: #28C840; }
+
+    .cl-window-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-left: 8px;
+    }
+
+    /* ====== LOGIN FLOW ====== */
+    #login-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: calc(100% - 42px);
+      padding: 40px;
+      transition: opacity 0.4s;
+    }
+
+    .lf-step {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeInUp 0.45s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .lf-step.active { display: flex; }
+
+    .lf-logo-wrap {
+      width: 72px; height: 72px;
+      border-radius: 20px;
+      background: rgba(124,58,237,0.14);
+      border: 1px solid rgba(124,58,237,0.28);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .lf-logo-wrap img { width: 42px; height: 42px; }
+
+    .lf-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.8px;
+      margin-bottom: 10px;
+    }
+
+    .lf-desc {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .lf-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 36px;
+      background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+      border: 1px solid rgba(167,139,250,0.35);
+      border-radius: 11px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%;
+      letter-spacing: -0.2px;
+    }
+
+    .lf-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 28px rgba(124,58,237,0.5);
+    }
+
+    .lf-btn-primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .lf-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 11px 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 11px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.18s, color 0.18s;
+    }
+
+    .lf-btn-secondary:hover {
+      background: rgba(255,255,255,0.09);
+      color: var(--text-primary);
+    }
+
+    /* Login tabs */
+    .lf-tab-row {
+      display: flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 24px;
+      width: 100%;
+    }
+
+    .lf-tab {
+      flex: 1;
+      padding: 8px 0;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+      border: none;
+      background: none;
+    }
+
+    .lf-tab.active {
+      background: rgba(124,58,237,0.2);
+      border: 1px solid rgba(124,58,237,0.3);
+      color: var(--accent-light);
+    }
+
+    .lf-login-panel { display: none; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+    .lf-login-panel.active { display: flex; }
+
+    /* QR code box */
+    .lf-qr-box {
+      width: 148px; height: 148px;
+      border-radius: 12px;
+      background: white;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 10px;
+    }
+
+    .lf-qr-hint { font-size: 12px; color: var(--text-dim); }
+
+    /* Phone inputs */
+    .lf-phone-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 11px 14px;
+      width: 100%;
+    }
+
+    .lf-phone-code {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      padding-right: 8px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .lf-phone-num { flex: 1; font-size: 13.5px; color: var(--text-primary); font-weight: 500; }
+
+    .lf-sms-row { display: flex; gap: 8px; width: 100%; }
+
+    .lf-sms-input {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 18px;
+      color: var(--text-primary);
+      letter-spacing: 8px;
+      text-align: center;
+    }
+
+    .lf-sms-send {
+      padding: 11px 14px;
+      background: rgba(124,58,237,0.12);
+      border: 1px solid rgba(124,58,237,0.25);
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-light);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Import list */
+    .lf-import-list { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 20px; }
+
+    .lf-import-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 11px;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s;
+    }
+
+    .lf-import-item:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.14); }
+
+    .lf-import-item.selected {
+      background: rgba(124,58,237,0.1);
+      border-color: rgba(124,58,237,0.3);
+    }
+
+    .lf-browser-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .lf-import-name { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+    .lf-import-sub { font-size: 11.5px; color: var(--text-dim); margin-top: 1px; }
+
+    .lf-import-check {
+      margin-left: auto;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .lf-import-item.selected .lf-import-check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Survey */
+    .lf-survey-options { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 20px; }
+
+    .lf-survey-opt {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.18s;
+      text-align: left;
+    }
+
+    .lf-survey-opt:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.14); transform: translateX(3px); }
+    .lf-survey-opt.selected { background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.35); transform: translateX(3px); }
+
+    .lf-survey-emoji { font-size: 22px; flex-shrink: 0; }
+    .lf-survey-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .lf-survey-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+    .lf-radio {
+      margin-left: auto;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.15);
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .lf-survey-opt.selected .lf-radio {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 8px rgba(124,58,237,0.5);
+    }
+
+    /* Progress dots */
+    .lf-progress { display: flex; gap: 6px; margin-bottom: 28px; }
+
+    .lf-dot {
+      width: 6px; height: 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.15);
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    .lf-dot.active { width: 20px; background: var(--accent-light); }
+    .lf-dot.done { background: rgba(124,58,237,0.5); }
   </style>
 </head>
 <body>
 
   <!-- ColorBends Background -->
   <canvas id="colorCanvas"></canvas>
+
+  <div id="website-wrap">
 
   <!-- Navbar -->
   <nav id="navbar">
@@ -1582,6 +2029,251 @@
     </div>
   </footer>
 
+  </div><!-- /website-wrap -->
+
+  <!-- Download Layer (flying icon) -->
+  <div id="dl-layer">
+    <div id="dl-icon">
+      <div class="safari-icon-inner">
+        <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="14" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/>
+          <circle cx="18" cy="18" r="2.5" fill="white"/>
+          <polygon points="18,18 15,9 18,11.5 21,9" fill="#FF3B30"/>
+          <polygon points="18,18 15,27 18,24.5 21,27" fill="white"/>
+          <text x="18" y="6.5" text-anchor="middle" fill="white" font-size="4" font-weight="700" font-family="system-ui">N</text>
+          <text x="18" y="33" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-size="3.8" font-family="system-ui">S</text>
+          <text x="6" y="19.5" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-size="3.8" font-family="system-ui">W</text>
+          <text x="30" y="19.5" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-size="3.8" font-family="system-ui">E</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download Toast -->
+  <div id="dl-toast">
+    <div class="dl-toast-header">
+      <div class="dl-toast-app-icon">
+        <svg width="20" height="20" viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="13" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+          <circle cx="18" cy="18" r="2.5" fill="white"/>
+          <polygon points="18,18 15,9 18,11.5 21,9" fill="#FF3B30"/>
+          <polygon points="18,18 15,27 18,24.5 21,27" fill="white"/>
+        </svg>
+      </div>
+      <div>
+        <div class="dl-toast-name">魔方AI.dmg</div>
+        <div class="dl-toast-size">正在下载 · 128 MB</div>
+      </div>
+    </div>
+    <div class="dl-progress-track">
+      <div class="dl-progress-fill" id="dl-progress-fill"></div>
+    </div>
+    <div class="dl-toast-meta">
+      <span id="dl-status-text">准备中...</span>
+      <span id="dl-pct">0%</span>
+    </div>
+  </div>
+
+  <!-- Client Overlay -->
+  <div id="client">
+    <div class="cl-titlebar">
+      <div class="cl-traffic">
+        <div class="cl-dot cl-dot-r"></div>
+        <div class="cl-dot cl-dot-y"></div>
+        <div class="cl-dot cl-dot-g"></div>
+      </div>
+      <span class="cl-window-title">魔方AI</span>
+    </div>
+
+    <div id="login-flow">
+      <!-- Progress dots -->
+      <div class="lf-progress">
+        <div class="lf-dot active" id="lf-pd-0"></div>
+        <div class="lf-dot" id="lf-pd-1"></div>
+        <div class="lf-dot" id="lf-pd-2"></div>
+        <div class="lf-dot" id="lf-pd-3"></div>
+      </div>
+
+      <!-- Step 0: Welcome -->
+      <div class="lf-step active" id="lf-step-0">
+        <div class="lf-logo-wrap">
+          <img src="./logo.svg" alt="魔方AI">
+        </div>
+        <div class="lf-title">欢迎使用魔方AI</div>
+        <div class="lf-desc">跨境电商 AI 一站式增长方案<br>保护账号安全，让每笔生意更稳</div>
+        <button class="lf-btn-primary" onclick="lfNext(0)">
+          <i data-lucide="zap" style="width:15px;height:15px;"></i>
+          开始使用
+        </button>
+      </div>
+
+      <!-- Step 1: Login -->
+      <div class="lf-step" id="lf-step-1">
+        <div class="lf-title" style="margin-bottom:6px;">登录 / 注册</div>
+        <div class="lf-desc" style="margin-bottom:20px;font-size:13px;">一键登录，账号数据本地加密</div>
+        <div class="lf-tab-row">
+          <button class="lf-tab active" id="tab-wechat" onclick="switchLoginTab('wechat')">微信扫码</button>
+          <button class="lf-tab" id="tab-phone" onclick="switchLoginTab('phone')">手机号</button>
+        </div>
+        <!-- WeChat panel -->
+        <div class="lf-login-panel active" id="panel-wechat">
+          <div class="lf-qr-box">
+            <svg width="128" height="128" viewBox="0 0 128 128" fill="none">
+              <!-- Finder patterns corners -->
+              <rect x="4" y="4" width="32" height="32" rx="4" fill="#111"/>
+              <rect x="8" y="8" width="24" height="24" rx="2" fill="white"/>
+              <rect x="12" y="12" width="16" height="16" rx="1.5" fill="#111"/>
+              <rect x="92" y="4" width="32" height="32" rx="4" fill="#111"/>
+              <rect x="96" y="8" width="24" height="24" rx="2" fill="white"/>
+              <rect x="100" y="12" width="16" height="16" rx="1.5" fill="#111"/>
+              <rect x="4" y="92" width="32" height="32" rx="4" fill="#111"/>
+              <rect x="8" y="96" width="24" height="24" rx="2" fill="white"/>
+              <rect x="12" y="100" width="16" height="16" rx="1.5" fill="#111"/>
+              <!-- Data modules -->
+              <rect x="44" y="4" width="6" height="6" fill="#111"/>
+              <rect x="54" y="4" width="6" height="6" fill="#111"/>
+              <rect x="66" y="4" width="8" height="6" fill="#111"/>
+              <rect x="78" y="4" width="6" height="6" fill="#111"/>
+              <rect x="44" y="14" width="8" height="6" fill="#111"/>
+              <rect x="58" y="12" width="6" height="8" fill="#111"/>
+              <rect x="70" y="14" width="10" height="6" fill="#111"/>
+              <rect x="44" y="24" width="6" height="6" fill="#111"/>
+              <rect x="56" y="22" width="8" height="8" fill="#111"/>
+              <rect x="72" y="24" width="6" height="6" fill="#111"/>
+              <rect x="4" y="44" width="8" height="6" fill="#111"/>
+              <rect x="16" y="44" width="6" height="6" fill="#111"/>
+              <rect x="26" y="44" width="8" height="8" fill="#111"/>
+              <rect x="4" y="56" width="6" height="6" fill="#111"/>
+              <rect x="14" y="54" width="10" height="6" fill="#111"/>
+              <rect x="26" y="54" width="6" height="8" fill="#111"/>
+              <rect x="4" y="66" width="8" height="6" fill="#111"/>
+              <rect x="16" y="68" width="12" height="6" fill="#111"/>
+              <rect x="4" y="78" width="6" height="6" fill="#111"/>
+              <rect x="14" y="78" width="8" height="6" fill="#111"/>
+              <rect x="26" y="76" width="6" height="8" fill="#111"/>
+              <!-- Center brand mark -->
+              <rect x="46" y="46" width="36" height="36" rx="6" fill="#7C3AED"/>
+              <rect x="52" y="52" width="24" height="24" rx="4" fill="rgba(255,255,255,0.15)"/>
+              <text x="64" y="68" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="system-ui">AI</text>
+              <!-- More data -->
+              <rect x="92" y="44" width="6" height="8" fill="#111"/>
+              <rect x="102" y="44" width="8" height="6" fill="#111"/>
+              <rect x="114" y="44" width="6" height="6" fill="#111"/>
+              <rect x="92" y="56" width="10" height="6" fill="#111"/>
+              <rect x="108" y="54" width="8" height="8" fill="#111"/>
+              <rect x="92" y="66" width="6" height="8" fill="#111"/>
+              <rect x="104" y="68" width="10" height="6" fill="#111"/>
+              <rect x="92" y="78" width="8" height="6" fill="#111"/>
+              <rect x="104" y="78" width="6" height="6" fill="#111"/>
+              <rect x="114" y="76" width="6" height="8" fill="#111"/>
+              <rect x="44" y="92" width="8" height="6" fill="#111"/>
+              <rect x="56" y="92" width="6" height="8" fill="#111"/>
+              <rect x="66" y="92" width="10" height="6" fill="#111"/>
+              <rect x="44" y="104" width="6" height="6" fill="#111"/>
+              <rect x="56" y="102" width="8" height="8" fill="#111"/>
+              <rect x="70" y="104" width="8" height="6" fill="#111"/>
+              <rect x="44" y="114" width="10" height="6" fill="#111"/>
+              <rect x="60" y="114" width="6" height="6" fill="#111"/>
+              <rect x="72" y="114" width="8" height="6" fill="#111"/>
+            </svg>
+          </div>
+          <div class="lf-qr-hint">用微信扫码，快速登录</div>
+          <div style="font-size:11px;color:var(--text-dim);">二维码 3 分钟内有效</div>
+          <button class="lf-btn-primary" style="margin-top:16px;" onclick="lfNext(1)">
+            <i data-lucide="check-circle" style="width:15px;height:15px;"></i>
+            扫码完成，继续
+          </button>
+        </div>
+        <!-- Phone panel -->
+        <div class="lf-login-panel" id="panel-phone">
+          <div class="lf-phone-input">
+            <span style="font-size:18px;">🇨🇳</span>
+            <span class="lf-phone-code">+86</span>
+            <span class="lf-phone-num">188 **** 8888</span>
+          </div>
+          <div class="lf-sms-row">
+            <div class="lf-sms-input">· · · · · ·</div>
+            <div class="lf-sms-send">获取验证码</div>
+          </div>
+          <button class="lf-btn-primary" onclick="lfNext(1)">
+            <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+            验证并登录
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Import browser data -->
+      <div class="lf-step" id="lf-step-2">
+        <div class="lf-title" style="margin-bottom:6px;">导入旧浏览器数据</div>
+        <div class="lf-desc" style="margin-bottom:20px;font-size:13px;">
+          将现有浏览器的 Cookie & 账号迁移至魔方AI安全空间<br>一键同步，旧浏览器数据不受影响
+        </div>
+        <div class="lf-import-list">
+          <div class="lf-import-item selected" id="import-chrome" onclick="toggleBrowser('chrome')">
+            <div class="lf-browser-icon" style="background:rgba(66,133,244,0.15);">🌐</div>
+            <div>
+              <div class="lf-import-name">Google Chrome</div>
+              <div class="lf-import-sub">检测到 3 个账号 · 42 个已保存书签</div>
+            </div>
+            <div class="lf-import-check">
+              <i data-lucide="check" style="width:11px;height:11px;color:white;"></i>
+            </div>
+          </div>
+          <div class="lf-import-item" id="import-edge" onclick="toggleBrowser('edge')">
+            <div class="lf-browser-icon" style="background:rgba(0,120,212,0.15);">🔷</div>
+            <div>
+              <div class="lf-import-name">Microsoft Edge</div>
+              <div class="lf-import-sub">检测到 1 个账号</div>
+            </div>
+            <div class="lf-import-check"></div>
+          </div>
+        </div>
+        <button class="lf-btn-primary" onclick="lfNext(2)">
+          <i data-lucide="download" style="width:15px;height:15px;"></i>
+          导入选中数据
+        </button>
+        <button class="lf-btn-secondary" onclick="lfNext(2)">跳过，以后再说</button>
+      </div>
+
+      <!-- Step 3: Survey -->
+      <div class="lf-step" id="lf-step-3">
+        <div class="lf-title" style="margin-bottom:6px;">你目前的店铺状态？</div>
+        <div class="lf-desc" style="margin-bottom:20px;font-size:13px;">AI 将根据你的阶段定制个性化方案</div>
+        <div class="lf-survey-options">
+          <div class="lf-survey-opt" id="survey-0" onclick="selectSurvey(0)">
+            <span class="lf-survey-emoji">🌱</span>
+            <div>
+              <div class="lf-survey-label">准备开店</div>
+              <div class="lf-survey-sub">还没注册账号，正在研究中</div>
+            </div>
+            <div class="lf-radio"></div>
+          </div>
+          <div class="lf-survey-opt" id="survey-1" onclick="selectSurvey(1)">
+            <span class="lf-survey-emoji">🛒</span>
+            <div>
+              <div class="lf-survey-label">已开店，还没出单</div>
+              <div class="lf-survey-sub">账号已注册，产品已上架，等待第一笔</div>
+            </div>
+            <div class="lf-radio"></div>
+          </div>
+          <div class="lf-survey-opt" id="survey-2" onclick="selectSurvey(2)">
+            <span class="lf-survey-emoji">📈</span>
+            <div>
+              <div class="lf-survey-label">已有销售</div>
+              <div class="lf-survey-sub">店铺在运营，想要提速</div>
+            </div>
+            <div class="lf-radio"></div>
+          </div>
+        </div>
+        <button class="lf-btn-primary" id="survey-next-btn" onclick="completeLogin()" disabled>
+          <i data-lucide="sparkles" style="width:15px;height:15px;"></i>
+          进入魔方AI
+        </button>
+      </div>
+
+    </div><!-- /login-flow -->
+  </div><!-- /client -->
+
   <script>
     // ====== Lucide Icons ======
     lucide.createIcons();
@@ -1671,6 +2363,217 @@
 
       draw();
     })();
+
+    // ====== ACT 1: Download animation + Client open + Login flow ======
+
+    // Hero "马上开始" button click
+    document.querySelector('.btn-hero-primary').addEventListener('click', function(e) {
+      e.preventDefault();
+      startAct1(this);
+    });
+
+    function startAct1(btn) {
+      const btnRect = btn.getBoundingClientRect();
+      const startX = btnRect.left + btnRect.width / 2;
+      const startY = btnRect.top + btnRect.height / 2;
+
+      const dlLayer = document.getElementById('dl-layer');
+      const dlIcon  = document.getElementById('dl-icon');
+      dlLayer.style.display = 'block';
+
+      // Position icon at button center
+      dlIcon.style.left    = (startX - 26) + 'px';
+      dlIcon.style.top     = (startY - 26) + 'px';
+      dlIcon.style.opacity = '1';
+      dlIcon.style.transform = 'scale(1)';
+
+      // Destination: bottom-right (above where toast will appear)
+      const endX = window.innerWidth - 76;
+      const endY = window.innerHeight - 180;
+      const arcHeight = 200;
+      const duration  = 820;
+      const startTime = performance.now();
+
+      function animateIcon(now) {
+        const elapsed = Math.min(now - startTime, duration);
+        const t = elapsed / duration;
+        const ease = 1 - Math.pow(1 - t, 3); // ease-out cubic
+
+        const cx = startX + (endX - startX) * ease;
+        const cy = startY + (endY - startY) * ease - Math.sin(t * Math.PI) * arcHeight;
+        const scale = 1 - t * 0.45;
+
+        dlIcon.style.left      = (cx - 26) + 'px';
+        dlIcon.style.top       = (cy - 26) + 'px';
+        dlIcon.style.transform = `scale(${scale})`;
+
+        if (t < 1) {
+          requestAnimationFrame(animateIcon);
+        } else {
+          dlIcon.style.opacity = '0';
+          showDownloadProgress();
+        }
+      }
+
+      requestAnimationFrame(animateIcon);
+    }
+
+    function showDownloadProgress() {
+      const toast = document.getElementById('dl-toast');
+      toast.style.display   = 'block';
+      toast.style.opacity   = '0';
+      toast.style.transform = 'translateY(12px)';
+      toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          toast.style.opacity   = '1';
+          toast.style.transform = 'translateY(0)';
+        });
+      });
+
+      const fill       = document.getElementById('dl-progress-fill');
+      const statusEl   = document.getElementById('dl-status-text');
+      const pctEl      = document.getElementById('dl-pct');
+
+      let pct = 0;
+
+      function tick() {
+        pct = Math.min(pct + 1.6 * (0.7 + Math.random() * 0.6), 100);
+        fill.style.width  = pct + '%';
+        pctEl.textContent = Math.floor(pct) + '%';
+
+        if      (pct < 25)  statusEl.textContent = '正在下载...';
+        else if (pct < 65)  statusEl.textContent = '下载中...';
+        else if (pct < 100) statusEl.textContent = '即将完成...';
+        else {
+          statusEl.textContent = '下载完成 ✓';
+          pctEl.textContent    = '100%';
+          setTimeout(finishDownload, 700);
+          return;
+        }
+        setTimeout(tick, 55);
+      }
+      tick();
+    }
+
+    function finishDownload() {
+      const toast   = document.getElementById('dl-toast');
+      const dlLayer = document.getElementById('dl-layer');
+
+      toast.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+      toast.style.opacity    = '0';
+      toast.style.transform  = 'translateY(10px)';
+
+      setTimeout(() => {
+        toast.style.display   = 'none';
+        dlLayer.style.display = 'none';
+        openClient();
+      }, 380);
+    }
+
+    function openClient() {
+      // Blur website behind client
+      document.getElementById('website-wrap').classList.add('blurred');
+
+      const client = document.getElementById('client');
+      client.style.display = 'block';
+
+      // Re-initialize lucide icons for the client's HTML
+      lucide.createIcons();
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          client.classList.add('open');
+        });
+      });
+    }
+
+    // ====== Login flow navigation ======
+    function lfNext(fromStep) {
+      const current = document.getElementById('lf-step-' + fromStep);
+      const next    = document.getElementById('lf-step-' + (fromStep + 1));
+      if (!next) return;
+
+      current.style.animation = 'none';
+      current.classList.remove('active');
+
+      const nextStep = fromStep + 1;
+      next.style.animation = '';
+      next.classList.add('active');
+
+      updateLfProgress(nextStep);
+    }
+
+    function updateLfProgress(step) {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById('lf-pd-' + i);
+        if (!dot) continue;
+        dot.classList.remove('active', 'done');
+        if (i < step)      dot.classList.add('done');
+        else if (i === step) dot.classList.add('active');
+      }
+    }
+
+    function switchLoginTab(tab) {
+      document.querySelectorAll('.lf-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.lf-login-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      document.getElementById('panel-' + tab).classList.add('active');
+    }
+
+    function toggleBrowser(name) {
+      document.getElementById('import-' + name).classList.toggle('selected');
+    }
+
+    let selectedSurvey = -1;
+
+    function selectSurvey(idx) {
+      document.querySelectorAll('.lf-survey-opt').forEach((el, i) => {
+        el.classList.toggle('selected', i === idx);
+      });
+      selectedSurvey = idx;
+
+      const btn = document.getElementById('survey-next-btn');
+      btn.disabled = false;
+    }
+
+    function completeLogin() {
+      if (selectedSurvey === -1) return;
+
+      const flow = document.getElementById('login-flow');
+      flow.style.transition = 'opacity 0.4s';
+      flow.style.opacity    = '0';
+
+      setTimeout(() => {
+        // Act 2 placeholder — will be replaced in next phase
+        flow.innerHTML = `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;">
+            <div style="width:60px;height:60px;border-radius:50%;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);display:flex;align-items:center;justify-content:center;">
+              <svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='#A78BFA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>
+            </div>
+            <div>
+              <div style="font-size:18px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;margin-bottom:6px;">正在配置你的安全空间…</div>
+              <div style="font-size:13.5px;color:var(--text-secondary);line-height:1.7;">AI 正在初始化专属隔离环境<br>账号永远不会被平台关联</div>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:4px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#A78BFA;animation:pulse 1.4s infinite 0s;"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#A78BFA;animation:pulse 1.4s infinite 0.2s;"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#A78BFA;animation:pulse 1.4s infinite 0.4s;"></div>
+            </div>
+          </div>
+        `;
+        // Add pulse animation if not already defined
+        if (!document.getElementById('pulse-style')) {
+          const s = document.createElement('style');
+          s.id = 'pulse-style';
+          s.textContent = '@keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }';
+          document.head.appendChild(s);
+        }
+        flow.style.opacity = '1';
+        lucide.createIcons();
+      }, 400);
+    }
   </script>
 </body>
 </html>
