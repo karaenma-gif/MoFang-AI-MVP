@@ -4105,6 +4105,159 @@
         });
         msgs.appendChild(aiEl);
         msgs.scrollTop = msgs.scrollHeight;
+        setTimeout(startAct6Step2, 1600);
+      }, 700);
+    }
+
+    // ====== ACT 6 STEP 2: 惊喜二 · 达人获客 ======
+
+    function startAct6Step2() {
+      const msgs = document.getElementById('act5-messages');
+      if (!msgs) return;
+
+      // AI: 匹配到12位达人
+      const el1 = buildMsgEl({ type: 'ai', text: '我帮你匹配了 <strong style="color:rgba(255,255,255,0.95);">12</strong> 个高转化垂类达人 🎯' });
+      msgs.appendChild(el1);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      // AI insight card: 为什么选小达人
+      setTimeout(() => {
+        const el2 = buildMsgEl({
+          type: 'card', icon: 'trending-up', iconColor: '#93C5FD',
+          title: '为什么选垂类小达人？',
+          lines: [
+            '粉丝 1–10 万 · 内容更垂直精准',
+            '转化率比百万粉大V高 <span style="color:#34D399;font-weight:600;">3 倍</span>',
+            '合作费用低 <span style="color:#34D399;font-weight:600;">80%</span>，ROI 更划算'
+          ]
+        });
+        msgs.appendChild(el2);
+        msgs.scrollTop = msgs.scrollHeight;
+      }, 900);
+
+      // Transition browser area to KOL list
+      setTimeout(showAct6KOLList, 1400);
+    }
+
+    function showAct6KOLList() {
+      const content = document.getElementById('act5-content');
+      if (!content) return;
+
+      content.style.transition = 'opacity 0.35s ease';
+      content.style.opacity = '0';
+
+      setTimeout(() => {
+        content.style.cssText = 'flex:1;display:flex;overflow:hidden;';
+        content.innerHTML = `
+          <div style="flex:1;display:flex;flex-direction:column;padding:18px 20px;gap:12px;overflow:hidden;">
+
+            <!-- Header -->
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+              <div>
+                <div style="font-size:13.5px;font-weight:700;color:var(--text-primary);">AI 达人匹配结果</div>
+                <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">「磁吸调料架」· 已匹配 12 位垂类达人</div>
+              </div>
+              <div style="padding:4px 11px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.22);border-radius:8px;flex-shrink:0;">
+                <span style="font-size:11px;font-weight:700;color:#93C5FD;">转化率 ↑3× · 合作费 ↓80%</span>
+              </div>
+            </div>
+
+            <!-- KOL list -->
+            <div style="display:flex;flex-direction:column;gap:9px;flex:1;min-height:0;overflow:hidden;">
+
+              <!-- KOL 1 -->
+              <div style="display:flex;align-items:center;gap:13px;padding:13px 15px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:11px;animation:fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) 0.05s both;">
+                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(59,130,246,0.25),rgba(59,130,246,0.08));border:1px solid rgba(59,130,246,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i data-lucide="chef-hat" style="width:15px;height:15px;color:#93C5FD;"></i>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:12.5px;font-weight:700;color:var(--text-primary);">@kitchen_hacks_us</div>
+                  <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">厨房技巧 · 4.2 万粉 · 互动率 8.3%</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                  <div style="font-size:13px;font-weight:700;color:var(--accent-light);">$80</div>
+                  <div style="font-size:10px;color:var(--text-dim);">/ 条</div>
+                </div>
+              </div>
+
+              <!-- KOL 2 -->
+              <div style="display:flex;align-items:center;gap:13px;padding:13px 15px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:11px;animation:fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) 0.18s both;">
+                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(16,185,129,0.25),rgba(16,185,129,0.08));border:1px solid rgba(16,185,129,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i data-lucide="home" style="width:15px;height:15px;color:#34D399;"></i>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:12.5px;font-weight:700;color:var(--text-primary);">@homestyle_daily</div>
+                  <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">家居生活 · 2.8 万粉 · 互动率 11.2%</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                  <div style="font-size:13px;font-weight:700;color:var(--accent-light);">$60</div>
+                  <div style="font-size:10px;color:var(--text-dim);">/ 条</div>
+                </div>
+              </div>
+
+              <!-- KOL 3 -->
+              <div style="display:flex;align-items:center;gap:13px;padding:13px 15px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:11px;animation:fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) 0.31s both;">
+                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(245,158,11,0.25),rgba(245,158,11,0.08));border:1px solid rgba(245,158,11,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i data-lucide="sparkles" style="width:15px;height:15px;color:#FCD34D;"></i>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:12.5px;font-weight:700;color:var(--text-primary);">@tidyhome_tips</div>
+                  <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">整理收纳 · 6.1 万粉 · 互动率 7.1%</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                  <div style="font-size:13px;font-weight:700;color:var(--accent-light);">$120</div>
+                  <div style="font-size:10px;color:var(--text-dim);">/ 条</div>
+                </div>
+              </div>
+
+              <!-- More -->
+              <div style="display:flex;align-items:center;justify-content:center;padding:11px;border:1px dashed rgba(255,255,255,0.07);border-radius:11px;animation:fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) 0.42s both;">
+                <span style="font-size:11.5px;color:var(--text-dim);">还有 9 位达人 · 已按转化潜力排序</span>
+              </div>
+
+            </div>
+
+            <!-- CTA -->
+            <button id="kol-launch-btn" onclick="act6LaunchKOL()" style="width:100%;padding:13px;background:rgba(230,230,230,1);border:none;border-radius:10px;font-size:14px;font-weight:600;color:rgba(47,48,49,1);cursor:pointer;box-shadow:inset 0 1px 0.4px rgba(255,255,255,1),inset 0 -1px 0.4px rgba(0,0,0,0.2),0 0 14px rgba(255,255,255,0.15);letter-spacing:0.2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity 0.18s;animation:fadeInUp 0.4s cubic-bezier(0.16,1,0.3,1) 0.5s both;">
+              <i data-lucide="send" style="width:14px;height:14px;"></i>
+              一键发起合作
+            </button>
+
+          </div>
+        `;
+        content.style.transition = 'opacity 0.4s ease';
+        content.style.opacity = '1';
+        lucide.createIcons({ nodes: [content] });
+      }, 360);
+    }
+
+    function act6LaunchKOL() {
+      const btn = document.getElementById('kol-launch-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.45';
+        btn.style.cursor = 'default';
+      }
+
+      const msgs = document.getElementById('act5-messages');
+      if (!msgs) return;
+
+      const userEl = buildMsgEl({ type: 'user', text: '一键发起合作' });
+      msgs.appendChild(userEl);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      setTimeout(() => {
+        const aiEl = buildMsgEl({
+          type: 'card', icon: 'send', iconColor: '#93C5FD',
+          title: '合作邀约已发出 ✓',
+          lines: [
+            '① @kitchen_hacks_us &nbsp;② @homestyle_daily &nbsp;③ @tidyhome_tips',
+            '预计 48h 回复率约 <span style="color:#34D399;font-weight:600;">41%</span>',
+            '接下来帮你一键生成视频脚本 👇'
+          ]
+        });
+        msgs.appendChild(aiEl);
+        msgs.scrollTop = msgs.scrollHeight;
       }, 700);
     }
 
