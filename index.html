@@ -1273,6 +1273,295 @@
       margin-left: 8px;
     }
 
+    /* ====== ACT 3: RISK GLOW STATES ====== */
+    .cl-browser-area {
+      transition: box-shadow 0.55s ease;
+    }
+
+    .cl-browser-area.risk-yellow {
+      box-shadow:
+        0 0 0 2px rgba(245, 158, 11, 0.78),
+        0 0 20px 5px rgba(245, 158, 11, 0.28),
+        0 0 50px 14px rgba(245, 158, 11, 0.1);
+    }
+
+    .cl-browser-area.risk-red {
+      box-shadow:
+        0 0 0 2px rgba(239, 68, 68, 0.92),
+        0 0 22px 6px rgba(239, 68, 68, 0.44),
+        0 0 65px 18px rgba(239, 68, 68, 0.18);
+      animation: dangerPulse 1.7s ease-in-out infinite;
+    }
+
+    @keyframes dangerPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 2px rgba(239, 68, 68, 0.92),
+          0 0 22px 6px rgba(239, 68, 68, 0.44),
+          0 0 65px 18px rgba(239, 68, 68, 0.18);
+      }
+      50% {
+        box-shadow:
+          0 0 0 2.5px rgba(239, 68, 68, 1),
+          0 0 32px 12px rgba(239, 68, 68, 0.60),
+          0 0 90px 28px rgba(239, 68, 68, 0.28);
+      }
+    }
+
+    /* ====== TikTok Login Mock ====== */
+    #tiktok-mock {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0b0b0b;
+      padding: 36px 40px;
+    }
+
+    .tk-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .tk-logo-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .tk-logo-name {
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+
+    .tk-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .tk-subtitle {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .tk-form {
+      width: 310px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .tk-input-wrap {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: opacity 0.3s;
+    }
+
+    .tk-input-label {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.35);
+      white-space: nowrap;
+      padding-right: 10px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      flex-shrink: 0;
+    }
+
+    .tk-input-val {
+      flex: 1;
+      font-size: 13.5px;
+      color: white;
+      font-family: 'SF Mono', 'Menlo', monospace;
+      min-height: 18px;
+    }
+
+    .tk-pass-dots {
+      flex: 1;
+      font-size: 20px;
+      letter-spacing: 4px;
+      color: rgba(255,255,255,0.75);
+      min-height: 18px;
+      padding-top: 1px;
+    }
+
+    .tk-login-btn {
+      background: #FE2C55;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      cursor: default;
+      margin-top: 4px;
+      transition: opacity 0.4s;
+    }
+
+    /* ====== RISK MODAL ====== */
+    #risk-overlay {
+      display: none;
+      position: absolute;
+      inset: 42px 0 0 0;
+      background: rgba(3, 7, 18, 0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 600;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #risk-modal-card {
+      background: rgba(17, 18, 19, 0.95);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(239, 68, 68, 0.28);
+      border-radius: 18px;
+      padding: 32px 30px 26px;
+      width: 380px;
+      max-width: 90%;
+      box-shadow:
+        0 0 0 1px rgba(239,68,68,0.12),
+        0 24px 64px rgba(0,0,0,0.85),
+        0 0 48px rgba(239,68,68,0.18);
+      animation: riskModalIn 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+      text-align: center;
+    }
+
+    @keyframes riskModalIn {
+      from { opacity: 0; transform: scale(0.88) translateY(14px); }
+      to   { opacity: 1; transform: scale(1)   translateY(0); }
+    }
+
+    .risk-modal-icon-wrap {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.28);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      animation: dangerPulse 1.7s ease-in-out infinite;
+    }
+
+    .risk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.28);
+      border-radius: 100px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #F87171;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .risk-modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .risk-modal-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 18px;
+    }
+
+    .risk-indicators {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 22px;
+      padding: 13px 16px;
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.14);
+      border-radius: 11px;
+      text-align: left;
+    }
+
+    .risk-ind-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+    }
+
+    .risk-dot-red {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #EF4444;
+      box-shadow: 0 0 5px rgba(239,68,68,0.8);
+      flex-shrink: 0;
+    }
+
+    .risk-btn-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+      border: 1px solid rgba(167,139,250,0.35);
+      border-radius: 11px;
+      color: white;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 10px;
+      letter-spacing: -0.2px;
+    }
+
+    .risk-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 28px rgba(124,58,237,0.52);
+    }
+
+    .risk-btn-secondary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 11px;
+      color: var(--text-dim);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+
+    .risk-btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+      color: var(--text-secondary);
+    }
+
     /* ====== CLIENT MAIN BODY (Act 2+) ====== */
     #client-body {
       display: none;
@@ -2617,7 +2906,7 @@
           <div class="cl-nav-btn-sm">
             <i data-lucide="chevron-right" style="width:13px;height:13px;opacity:0.3;"></i>
           </div>
-          <div class="cl-url-bar">新标签页</div>
+          <div class="cl-url-bar" id="cl-url-bar" onclick="startAct3()" style="cursor:pointer;" title="点击演示风险拦截流程">新标签页</div>
           <div class="cl-magic-btn">
             <i data-lucide="sparkles" style="width:10px;height:10px;"></i>
             魔方 Chat
@@ -2672,6 +2961,31 @@
           </div>
         </div>
 
+        <!-- Act 3: TikTok Login Mock -->
+        <div id="tiktok-mock">
+          <div class="tk-logo">
+            <div class="tk-logo-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.94a8.18 8.18 0 0 0 4.78 1.52V7.01a4.85 4.85 0 0 1-1.01-.32z"/>
+              </svg>
+            </div>
+            <span class="tk-logo-name">TikTok</span>
+          </div>
+          <div class="tk-title">登录 TikTok</div>
+          <div class="tk-subtitle">管理你的 TikTok Shop 卖家账号</div>
+          <div class="tk-form">
+            <div class="tk-input-wrap">
+              <span class="tk-input-label">🇨🇳 +86</span>
+              <span class="tk-input-val" id="tk-phone-val"></span>
+            </div>
+            <div class="tk-input-wrap" id="tk-pass-wrap" style="opacity:0.35;">
+              <span class="tk-input-label">密码</span>
+              <span class="tk-pass-dots" id="tk-pass-val"></span>
+            </div>
+            <button class="tk-login-btn" id="tk-login-btn" style="opacity:0.45;">登录</button>
+          </div>
+        </div>
+
       </div><!-- /cl-browser-area -->
 
       <!-- AI Chat panel (slides in on card click) -->
@@ -2697,6 +3011,43 @@
       </div><!-- /cl-chat-side -->
 
     </div><!-- /client-body -->
+
+    <!-- Act 3: Risk Warning Modal (absolute within #client) -->
+    <div id="risk-overlay">
+      <div id="risk-modal-card">
+        <div class="risk-modal-icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div class="risk-badge">⚠ 高风险操作</div>
+        <div class="risk-modal-title">你的账号正处于风险中</div>
+        <div class="risk-modal-desc">
+          74% 的用户在无安全空间下登录会被平台封控，你当前的操作暴露了真实设备信息。
+        </div>
+        <div class="risk-indicators">
+          <div class="risk-ind-row">
+            <div class="risk-dot-red"></div>
+            真实 IP 地址已暴露
+          </div>
+          <div class="risk-ind-row">
+            <div class="risk-dot-red"></div>
+            设备指纹未隔离，账号关联风险极高
+          </div>
+          <div class="risk-ind-row">
+            <div class="risk-dot-red"></div>
+            同 IP 下检测到 3 个关联账号
+          </div>
+        </div>
+        <button class="risk-btn-primary" onclick="enterAct4()">
+          <i data-lucide="shield-check" style="width:15px;height:15px;"></i>
+          立即创建安全空间
+        </button>
+        <button class="risk-btn-secondary" onclick="dismissRisk()">继续（不推荐）</button>
+      </div>
+    </div>
 
   </div><!-- /client -->
 
@@ -3133,6 +3484,181 @@
         `;
       }
       return el;
+    }
+
+    // ====== ACT 3: Risk Interception ======
+    let act3Started = false;
+
+    function startAct3() {
+      if (act3Started) return;
+      act3Started = true;
+
+      const urlBar = document.getElementById('cl-url-bar');
+      const browserArea = document.querySelector('.cl-browser-area');
+
+      // Step 1: Type "tiktok.com" in URL bar char by char
+      const targetUrl = 'tiktok.com';
+      let typed = '';
+      let charIdx = 0;
+
+      function typeChar() {
+        if (charIdx < targetUrl.length) {
+          typed += targetUrl[charIdx++];
+          urlBar.textContent = typed;
+          setTimeout(typeChar, 75 + Math.random() * 45);
+        } else {
+          // Typing done — show TikTok page + yellow glow
+          setTimeout(() => {
+            // Hide new tab, show TikTok mock
+            document.querySelector('.cl-newtab').style.display = 'none';
+            const mock = document.getElementById('tiktok-mock');
+            mock.style.display = 'flex';
+            mock.style.opacity = '0';
+            mock.style.transition = 'opacity 0.4s ease';
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+              mock.style.opacity = '1';
+            }));
+
+            // Yellow warning glow
+            browserArea.classList.add('risk-yellow');
+            lucide.createIcons();
+
+            // After short pause, start credential fill
+            setTimeout(fillCredentials, 1500);
+          }, 280);
+        }
+      }
+
+      setTimeout(typeChar, 220);
+    }
+
+    function fillCredentials() {
+      const phoneEl  = document.getElementById('tk-phone-val');
+      const passEl   = document.getElementById('tk-pass-val');
+      const passWrap = document.getElementById('tk-pass-wrap');
+      const loginBtn = document.getElementById('tk-login-btn');
+      const browserArea = document.querySelector('.cl-browser-area');
+
+      // Type phone number
+      const phone = '188 8888 8888';
+      let pIdx = 0;
+
+      function typePhone() {
+        if (pIdx < phone.length) {
+          phoneEl.textContent += phone[pIdx++];
+          setTimeout(typePhone, 68 + Math.random() * 52);
+        } else {
+          // Phone done → escalate to red glow
+          browserArea.classList.remove('risk-yellow');
+          browserArea.classList.add('risk-red');
+
+          // Reveal password field
+          passWrap.style.transition = 'opacity 0.35s ease';
+          passWrap.style.opacity = '1';
+
+          setTimeout(typePass, 520);
+        }
+      }
+
+      typePhone();
+
+      function typePass() {
+        const dots = '••••••••';
+        let dIdx = 0;
+        function typeDot() {
+          if (dIdx < dots.length) {
+            passEl.textContent += dots[dIdx++];
+            setTimeout(typeDot, 95 + Math.random() * 40);
+          } else {
+            // All credentials filled — activate login button
+            loginBtn.style.transition = 'opacity 0.3s ease';
+            loginBtn.style.opacity = '1';
+            setTimeout(showRiskModal, 820);
+          }
+        }
+        typeDot();
+      }
+    }
+
+    function showRiskModal() {
+      const overlay = document.getElementById('risk-overlay');
+      overlay.style.display = 'flex';
+      lucide.createIcons({ nodes: [document.getElementById('risk-modal-card')] });
+    }
+
+    function dismissRisk() {
+      const overlay = document.getElementById('risk-overlay');
+      overlay.style.display = 'none';
+    }
+
+    function enterAct4() {
+      const overlay = document.getElementById('risk-overlay');
+      const browserArea = document.querySelector('.cl-browser-area');
+
+      // Dismiss modal + remove danger glow
+      overlay.style.display = 'none';
+      browserArea.classList.remove('risk-red', 'risk-yellow');
+
+      // Fade out client body
+      const body = document.getElementById('client-body');
+      body.style.transition = 'opacity 0.4s ease';
+      body.style.opacity = '0';
+
+      setTimeout(() => {
+        // Replace with Act 4 setup progress screen
+        body.innerHTML = `
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+            <div id="act4-setup" style="display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;width:100%;max-width:380px;padding:40px;">
+              <div style="width:60px;height:60px;border-radius:50%;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);display:flex;align-items:center;justify-content:center;">
+                <svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='#A78BFA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>
+              </div>
+              <div>
+                <div id="act4-title" style="font-size:18px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;margin-bottom:6px;">正在创建安全空间…</div>
+                <div id="act4-step" style="font-size:13px;color:var(--text-secondary);line-height:1.7;">初始化隔离环境…</div>
+              </div>
+              <div style="width:100%;background:rgba(255,255,255,0.07);border-radius:4px;height:4px;overflow:hidden;">
+                <div id="act4-bar" style="height:100%;background:linear-gradient(90deg,#7C3AED,#A78BFA);width:0%;border-radius:4px;transition:width 0.45s cubic-bezier(0.16,1,0.3,1);"></div>
+              </div>
+              <div id="act4-hint" style="font-size:11px;color:var(--text-dim);">账号永远不会被平台关联</div>
+            </div>
+          </div>
+        `;
+        body.style.opacity = '1';
+        runAct4Steps();
+      }, 420);
+    }
+
+    function runAct4Steps() {
+      const steps = [
+        [18,  '初始化浏览器隔离层…'],
+        [36,  '配置独立网络环境…'],
+        [54,  '加密存储账号数据…'],
+        [72,  '同步 TikTok 登录凭据…'],
+        [90,  '校验安全空间完整性…'],
+        [100, '安全空间已就绪 ✓'],
+      ];
+
+      const bar     = document.getElementById('act4-bar');
+      const stepEl  = document.getElementById('act4-step');
+      const titleEl = document.getElementById('act4-title');
+      const hintEl  = document.getElementById('act4-hint');
+
+      let i = 0;
+      function runStep() {
+        if (i >= steps.length) return;
+        const [pct, text] = steps[i++];
+        bar.style.width  = pct + '%';
+        stepEl.textContent = text;
+
+        if (pct === 100) {
+          titleEl.textContent = '安全空间配置完成！';
+          hintEl.innerHTML = '<span style="color:#34D399;font-weight:600;">✓ 封号率 0% · AI 全程守护</span>';
+          // Act 4 done — placeholder for Act 5
+          return;
+        }
+        setTimeout(runStep, 490 + Math.random() * 160);
+      }
+      setTimeout(runStep, 320);
     }
   </script>
 </body>
