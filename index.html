@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>魔方AI - 开启跨境 AI 时代的一站式增长方案</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    /* ============================================================
+       LOCKED PARAMETERS - DO NOT MODIFY
+       backdrop-filter: blur(20px) saturate(180%)
+       glass-bg: rgba(17, 18, 19, 0.6)
+       glass-border: rgba(255, 255, 255, 0.1)
+       glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8)
+    ============================================================ */
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --glass-bg: rgba(17, 18, 19, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-blur: blur(20px) saturate(180%);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+      --accent: #7C3AED;
+      --accent-light: #A78BFA;
+      --text-primary: #F8FAFC;
+      --text-secondary: rgba(248, 250, 252, 0.6);
+      --text-dim: rgba(248, 250, 252, 0.28);
+      --border-subtle: rgba(255, 255, 255, 0.05);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #030712;
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ====== COLORBENDS CANVAS ====== */
+    #colorCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ====== NAVBAR ====== */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 60px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      padding: 0 48px;
+      transition: background 0.35s, border-color 0.35s, backdrop-filter 0.35s;
+    }
+
+    #navbar.scrolled {
+      background: rgba(17, 18, 19, 0.75);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .nav-logo img {
+      height: 26px;
+      width: auto;
+    }
+
+    .nav-logo-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin: 0 auto;
+    }
+
+    .nav-link {
+      padding: 7px 14px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: color 0.18s, background 0.18s;
+      cursor: pointer;
+      background: none;
+      border: none;
+      letter-spacing: -0.1px;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* ====== BUTTONS ====== */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+      border: 1px solid rgba(167, 139, 250, 0.35);
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+      letter-spacing: -0.1px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, color 0.18s;
+      text-decoration: none;
+      letter-spacing: -0.1px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: var(--text-primary);
+    }
+
+    /* ====== HERO SECTION ====== */
+    #hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 140px 48px 100px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      background: rgba(124, 58, 237, 0.12);
+      border: 1px solid rgba(124, 58, 237, 0.28);
+      border-radius: 100px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--accent-light);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 36px;
+      animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-title {
+      font-size: clamp(44px, 5.2vw, 76px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -2.5px;
+      margin-bottom: 24px;
+      background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.65) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      max-width: 880px;
+      animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    }
+
+    .hero-subtitle {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 640px;
+      line-height: 1.75;
+      margin-bottom: 52px;
+      letter-spacing: -0.2px;
+      animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+    }
+
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      justify-content: center;
+      animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+    }
+
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+      border: 1px solid rgba(167, 139, 250, 0.4);
+      border-radius: 12px;
+      color: white;
+      font-size: 15.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.22s, box-shadow 0.22s;
+      text-decoration: none;
+      box-shadow: 0 8px 28px rgba(124, 58, 237, 0.45), inset 0 1px 0 rgba(255,255,255,0.18);
+      letter-spacing: -0.2px;
+    }
+
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(124, 58, 237, 0.55), inset 0 1px 0 rgba(255,255,255,0.22);
+    }
+
+    .btn-hero-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 12px;
+      color: var(--text-secondary);
+      font-size: 15.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+      text-decoration: none;
+      letter-spacing: -0.2px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .btn-hero-secondary:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.22);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    /* ====== ANIMATIONS ====== */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(28px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ====== SCROLLBAR ====== */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+  <!-- ColorBends Background -->
+  <canvas id="colorCanvas"></canvas>
+
+  <!-- Navbar -->
+  <nav id="navbar">
+    <a class="nav-logo" href="#">
+      <img src="./logo.svg" alt="魔方AI Logo">
+      <span class="nav-logo-name">魔方AI</span>
+    </a>
+
+    <div class="nav-links">
+      <a class="nav-link" href="#">产品功能</a>
+      <a class="nav-link" href="#">AI市场</a>
+      <a class="nav-link" href="#">开发平台</a>
+      <a class="nav-link" href="#">博客</a>
+      <a class="nav-link" href="#">价格</a>
+    </div>
+
+    <div class="nav-actions">
+      <a class="btn-primary" href="#">
+        <i data-lucide="download" style="width:14px;height:14px;"></i>
+        下载
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="hero">
+    <div class="hero-eyebrow">
+      <i data-lucide="sparkles" style="width:12px;height:12px;"></i>
+      跨境电商 AI 助手
+    </div>
+
+    <h1 class="hero-title">
+      开启跨境 AI 时代的<br>一站式增长方案
+    </h1>
+
+    <p class="hero-subtitle">
+      魔方 AI 实现从账号保护到智能选品、文案生成的全流程闭环，助生意在 AI 浪潮中抢占先机。告别多软件拼凑的低效时代。
+    </p>
+
+    <div class="hero-cta">
+      <a class="btn-hero-primary" href="#">
+        <i data-lucide="zap" style="width:16px;height:16px;"></i>
+        马上开始
+      </a>
+      <a class="btn-hero-secondary" href="#">
+        <i data-lucide="play-circle" style="width:16px;height:16px;"></i>
+        看AI如何工作
+      </a>
+    </div>
+  </section>
+
+  <script>
+    // ====== Lucide Icons ======
+    lucide.createIcons();
+
+    // ====== Navbar scroll effect ======
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // ====== ColorBends Animation ======
+    // Ref: https://reactbits.dev/backgrounds/color-bends
+    // Organic flowing gradient blobs with sinusoidal movement
+    (function () {
+      const canvas = document.getElementById('colorCanvas');
+      const ctx = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Each orb: relative position (0-1), radius, color, phase offsets
+      const orbs = [
+        {
+          xBase: 0.18, yBase: 0.28,
+          xAmp: 0.14, yAmp: 0.10,
+          xFreq: 0.00031, yFreq: 0.00019,
+          xPhase: 0, yPhase: 1.2,
+          radiusFactor: 0.52,
+          color: [108, 40, 217]   // violet
+        },
+        {
+          xBase: 0.72, yBase: 0.22,
+          xAmp: 0.12, yAmp: 0.14,
+          xFreq: 0.00023, yFreq: 0.00027,
+          xPhase: 2.1, yPhase: 0.5,
+          radiusFactor: 0.48,
+          color: [30, 58, 138]    // deep blue
+        },
+        {
+          xBase: 0.50, yBase: 0.70,
+          xAmp: 0.18, yAmp: 0.10,
+          xFreq: 0.00017, yFreq: 0.00033,
+          xPhase: 4.2, yPhase: 3.1,
+          radiusFactor: 0.56,
+          color: [88, 28, 135]    // purple
+        },
+        {
+          xBase: 0.85, yBase: 0.65,
+          xAmp: 0.10, yAmp: 0.18,
+          xFreq: 0.00029, yFreq: 0.00021,
+          xPhase: 1.5, yPhase: 5.0,
+          radiusFactor: 0.42,
+          color: [14, 116, 144]   // teal
+        },
+        {
+          xBase: 0.08, yBase: 0.75,
+          xAmp: 0.10, yAmp: 0.12,
+          xFreq: 0.00022, yFreq: 0.00018,
+          xPhase: 3.7, yPhase: 2.3,
+          radiusFactor: 0.40,
+          color: [37, 99, 235]    // blue
+        },
+        {
+          xBase: 0.60, yBase: 0.15,
+          xAmp: 0.14, yAmp: 0.08,
+          xFreq: 0.00025, yFreq: 0.00035,
+          xPhase: 5.5, yPhase: 0.8,
+          radiusFactor: 0.38,
+          color: [139, 92, 246]   // light violet
+        },
+      ];
+
+      let t = 0;
+
+      function draw() {
+        const w = canvas.width;
+        const h = canvas.height;
+        const minDim = Math.min(w, h);
+
+        // Clear with near-black base
+        ctx.fillStyle = '#030712';
+        ctx.fillRect(0, 0, w, h);
+
+        // Draw each orb as a radial gradient
+        for (const orb of orbs) {
+          const x = (orb.xBase + Math.sin(t * orb.xFreq + orb.xPhase) * orb.xAmp) * w;
+          const y = (orb.yBase + Math.cos(t * orb.yFreq + orb.yPhase) * orb.yAmp) * h;
+          const r = minDim * orb.radiusFactor;
+
+          const [R, G, B] = orb.color;
+
+          const gradient = ctx.createRadialGradient(x, y, 0, x, y, r);
+          gradient.addColorStop(0,   `rgba(${R}, ${G}, ${B}, 0.55)`);
+          gradient.addColorStop(0.4, `rgba(${R}, ${G}, ${B}, 0.22)`);
+          gradient.addColorStop(0.8, `rgba(${R}, ${G}, ${B}, 0.06)`);
+          gradient.addColorStop(1,   `rgba(${R}, ${G}, ${B}, 0)`);
+
+          ctx.globalCompositeOperation = 'screen';
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.globalCompositeOperation = 'source-over';
+
+        // Soft vignette to deepen edges
+        const vignette = ctx.createRadialGradient(
+          w * 0.5, h * 0.5, minDim * 0.2,
+          w * 0.5, h * 0.5, minDim * 0.85
+        );
+        vignette.addColorStop(0, 'rgba(3,7,18,0)');
+        vignette.addColorStop(1, 'rgba(3,7,18,0.65)');
+        ctx.fillStyle = vignette;
+        ctx.fillRect(0, 0, w, h);
+
+        t++;
+        requestAnimationFrame(draw);
+      }
+
+      draw();
+    })();
+  </script>
+</body>
+</html>
