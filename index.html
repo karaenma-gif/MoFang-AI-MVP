@@ -3477,9 +3477,6 @@
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             body.style.opacity = '1';
-            // 已配置安全空间 → 移除「创建安全空间」功能卡片
-            const secCard = document.getElementById('card-security');
-            if (secCard) secCard.remove();
           });
         });
       }, 420);
