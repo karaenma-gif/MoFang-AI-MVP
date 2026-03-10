@@ -56,11 +56,16 @@
       display: flex;
       align-items: center;
       padding: 0 48px;
+      /* 常驻底色：确保文字不透过导航栏 */
+      background: rgba(3, 7, 18, 0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
       transition: background 0.35s, border-color 0.35s, backdrop-filter 0.35s;
     }
 
     #navbar.scrolled {
-      background: rgba(17, 18, 19, 0.75);
+      background: rgba(17, 18, 19, 0.82);
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       border-bottom: 1px solid var(--glass-border);
@@ -820,6 +825,281 @@
       flex-shrink: 0;
     }
 
+    /* ====== SECTION 3: STATS + BEFORE/AFTER ====== */
+    #stats-section {
+      position: relative;
+      z-index: 1;
+      padding: 130px 48px 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Stats strip */
+    .stats-strip {
+      display: flex;
+      width: 100%;
+      max-width: 960px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 72px;
+      background: rgba(255,255,255,0.015);
+    }
+
+    .stat-block {
+      flex: 1;
+      padding: 38px 28px;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      position: relative;
+    }
+
+    .stat-block:last-child { border-right: none; }
+
+    .stat-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(124,58,237,0.5), transparent);
+    }
+
+    .stat-num {
+      font-size: 54px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-num-accent {
+      background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-num-green {
+      background: linear-gradient(135deg, #6EE7B7 0%, #10B981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-num-blue {
+      background: linear-gradient(135deg, #93C5FD 0%, #3B82F6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-unit {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* Before / After comparison */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .compare-card {
+      border-radius: 18px;
+      padding: 32px 30px;
+    }
+
+    .compare-before {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.16);
+    }
+
+    .compare-after {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.16);
+    }
+
+    .compare-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .compare-icon-wrap {
+      width: 38px; height: 38px;
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .compare-before .compare-icon-wrap {
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #F87171;
+    }
+
+    .compare-after .compare-icon-wrap {
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
+      color: #34D399;
+    }
+
+    .compare-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .compare-subtitle {
+      font-size: 11.5px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .compare-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .compare-item:last-child { margin-bottom: 0; }
+
+    .ci-icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* ====== FOOTER ====== */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      background: rgba(3, 7, 18, 0.6);
+      padding: 64px 80px 36px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2.2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 14px;
+      text-decoration: none;
+    }
+
+    .footer-brand-logo img { height: 24px; }
+
+    .footer-brand-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .footer-tagline {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 280px;
+      margin-bottom: 24px;
+    }
+
+    .footer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #34D399;
+    }
+
+    .footer-col-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+    }
+
+    .footer-link {
+      display: block;
+      font-size: 13.5px;
+      color: var(--text-dim);
+      text-decoration: none;
+      margin-bottom: 11px;
+      transition: color 0.15s;
+      cursor: pointer;
+    }
+
+    .footer-link:hover { color: var(--text-secondary); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer-social-btn {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .footer-social-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--text-secondary);
+    }
+
     /* ====== ANIMATIONS ====== */
     @keyframes fadeInUp {
       from {
@@ -1125,6 +1405,182 @@
       </div>
     </div>
   </section>
+
+  <!-- Section 3: Stats + Before/After -->
+  <section id="stats-section">
+
+    <div class="section-eyebrow">
+      <i data-lucide="bar-chart-2" style="width:11px;height:11px;"></i>
+      真实成效
+    </div>
+
+    <h2 class="section-title">数据说话，不靠运气</h2>
+
+    <p class="section-subtitle">
+      魔方AI用户第一个月的真实表现，对比同期入场的普通新手卖家。
+    </p>
+
+    <!-- Stats Strip -->
+    <div class="stats-strip">
+      <div class="stat-block">
+        <div class="stat-num stat-num-accent">¥<span>8,400</span></div>
+        <div class="stat-label">首月 GMV</div>
+        <div class="stat-sub">潼潼：从 0 到第一笔订单<br>仅用 11 天</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num stat-num-green">87<span class="stat-unit">%</span></div>
+        <div class="stat-label">魔方AI用户 1 个月存活率</div>
+        <div class="stat-sub">同期普通新手存活率仅 <strong style="color:#F87171;">13%</strong><br>差距 6.7 倍</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num stat-num-blue">23</div>
+        <div class="stat-label">AI 安全拦截次数</div>
+        <div class="stat-sub">首月风险操作全部拦截<br><strong style="color:#34D399;">封号率 0%</strong></div>
+      </div>
+    </div>
+
+    <!-- Before / After -->
+    <div class="compare-grid">
+
+      <!-- Before -->
+      <div class="compare-card compare-before">
+        <div class="compare-header">
+          <div class="compare-icon-wrap">
+            <i data-lucide="x-circle" style="width:18px;height:18px;"></i>
+          </div>
+          <div>
+            <div class="compare-title">没有魔方AI，开店第一个月</div>
+            <div class="compare-subtitle">90% 的跨境新手真实遭遇</div>
+          </div>
+        </div>
+        <div class="compare-item">
+          <i data-lucide="alert-triangle" class="ci-icon" style="width:14px;height:14px;color:#F87171;flex-shrink:0;margin-top:1px;"></i>
+          多账号在同一环境操作，被平台检测关联，直接封号
+        </div>
+        <div class="compare-item">
+          <i data-lucide="alert-triangle" class="ci-icon" style="width:14px;height:14px;color:#F87171;flex-shrink:0;margin-top:1px;"></i>
+          凭感觉选品，押注积压货，首月亏损几千元
+        </div>
+        <div class="compare-item">
+          <i data-lucide="alert-triangle" class="ci-icon" style="width:14px;height:14px;color:#F87171;flex-shrink:0;margin-top:1px;"></i>
+          找达人合作要自己刷表格发邮件，回复率不足 5%
+        </div>
+        <div class="compare-item">
+          <i data-lucide="alert-triangle" class="ci-icon" style="width:14px;height:14px;color:#F87171;flex-shrink:0;margin-top:1px;"></i>
+          用 5 个软件拼凑工作流，每天切换耗时 2 小时以上
+        </div>
+        <div class="compare-item">
+          <i data-lucide="alert-triangle" class="ci-icon" style="width:14px;height:14px;color:#F87171;flex-shrink:0;margin-top:1px;"></i>
+          撑过第一个月的概率：<strong style="color:#F87171;">13%</strong>
+        </div>
+      </div>
+
+      <!-- After -->
+      <div class="compare-card compare-after">
+        <div class="compare-header">
+          <div class="compare-icon-wrap">
+            <i data-lucide="check-circle" style="width:18px;height:18px;"></i>
+          </div>
+          <div>
+            <div class="compare-title">使用魔方AI，同样的第一个月</div>
+            <div class="compare-subtitle">魔方AI 用户真实数据</div>
+          </div>
+        </div>
+        <div class="compare-item">
+          <i data-lucide="shield-check" class="ci-icon" style="width:14px;height:14px;color:#34D399;flex-shrink:0;margin-top:1px;"></i>
+          独立安全空间，AI 实时拦截 23 次风险操作，账号零封控
+        </div>
+        <div class="compare-item">
+          <i data-lucide="trending-up" class="ci-icon" style="width:14px;height:14px;color:#34D399;flex-shrink:0;margin-top:1px;"></i>
+          AI 锁定厨房收纳品类热度 ↑37%，推荐 3 个高利润 SKU
+        </div>
+        <div class="compare-item">
+          <i data-lucide="users" class="ci-icon" style="width:14px;height:14px;color:#34D399;flex-shrink:0;margin-top:1px;"></i>
+          自动匹配 12 位垂类小达人，AI 起草合作邀约，回复率 41%
+        </div>
+        <div class="compare-item">
+          <i data-lucide="zap" class="ci-icon" style="width:14px;height:14px;color:#34D399;flex-shrink:0;margin-top:1px;"></i>
+          一个窗口完成全流程，自然语言下指令，AI 自动执行
+        </div>
+        <div class="compare-item">
+          <i data-lucide="award" class="ci-icon" style="width:14px;height:14px;color:#34D399;flex-shrink:0;margin-top:1px;"></i>
+          首月 GMV ¥8,400，超越 <strong style="color:#34D399;">87%</strong> 同期新手
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+
+      <!-- Brand -->
+      <div>
+        <a class="footer-brand-logo" href="#">
+          <img src="./logo.svg" alt="魔方AI Logo">
+          <span class="footer-brand-name">魔方AI</span>
+        </a>
+        <p class="footer-tagline">
+          跨境电商 AI 一站式增长方案。从账号安全到选品、达人、内容生成，AI 全程陪跑，帮跨境新手赚到第一笔钱。
+        </p>
+        <div class="footer-badge">
+          <i data-lucide="shield-check" style="width:12px;height:12px;"></i>
+          已为 2,400+ 卖家守护账号安全
+        </div>
+      </div>
+
+      <!-- Product -->
+      <div>
+        <div class="footer-col-title">产品</div>
+        <a class="footer-link" href="#">智能选品</a>
+        <a class="footer-link" href="#">Listing 优化</a>
+        <a class="footer-link" href="#">达人获客</a>
+        <a class="footer-link" href="#">内容生成</a>
+        <a class="footer-link" href="#">安全中心</a>
+        <a class="footer-link" href="#">AI 市场</a>
+      </div>
+
+      <!-- Resources -->
+      <div>
+        <div class="footer-col-title">资源</div>
+        <a class="footer-link" href="#">帮助文档</a>
+        <a class="footer-link" href="#">更新日志</a>
+        <a class="footer-link" href="#">开发平台</a>
+        <a class="footer-link" href="#">博客</a>
+        <a class="footer-link" href="#">社区</a>
+      </div>
+
+      <!-- Company -->
+      <div>
+        <div class="footer-col-title">公司</div>
+        <a class="footer-link" href="#">关于我们</a>
+        <a class="footer-link" href="#">价格方案</a>
+        <a class="footer-link" href="#">合作伙伴</a>
+        <a class="footer-link" href="#">联系我们</a>
+        <a class="footer-link" href="#">加入我们</a>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 魔方AI · 保留所有权利 · 粤ICP备XXXXXXXX号</div>
+      <div class="footer-social">
+        <div class="footer-social-btn" title="微信">
+          <i data-lucide="message-circle" style="width:14px;height:14px;"></i>
+        </div>
+        <div class="footer-social-btn" title="微博">
+          <i data-lucide="twitter" style="width:14px;height:14px;"></i>
+        </div>
+        <div class="footer-social-btn" title="GitHub">
+          <i data-lucide="github" style="width:14px;height:14px;"></i>
+        </div>
+        <div class="footer-social-btn" title="YouTube">
+          <i data-lucide="youtube" style="width:14px;height:14px;"></i>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <script>
     // ====== Lucide Icons ======
