@@ -38,100 +38,13 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ====== COLORBENDS BACKGROUND ====== */
-    /* CSS blob approach: blur + mix-blend-mode:screen on dark bg */
-    .color-bends {
+    /* ====== COLORBENDS CANVAS ====== */
+    #colorCanvas {
       position: fixed;
-      inset: 0;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 0;
       pointer-events: none;
-      overflow: hidden;
-    }
-
-    .cb-orb {
-      position: absolute;
-      border-radius: 50%;
-      will-change: transform;
-    }
-
-    /* Orb 1: Deep violet — upper-left, large */
-    .cb-orb-1 {
-      width: 900px; height: 700px;
-      background: radial-gradient(ellipse at center, rgba(109,40,217,0.95) 0%, rgba(109,40,217,0.4) 40%, transparent 70%);
-      filter: blur(90px);
-      top: -180px; left: -120px;
-      animation: cbDrift1 24s ease-in-out infinite alternate;
-    }
-
-    /* Orb 2: Royal blue — upper-right */
-    .cb-orb-2 {
-      width: 800px; height: 750px;
-      background: radial-gradient(ellipse at center, rgba(37,99,235,0.9) 0%, rgba(37,99,235,0.35) 45%, transparent 70%);
-      filter: blur(100px);
-      top: -100px; right: -150px;
-      animation: cbDrift2 28s ease-in-out infinite alternate;
-    }
-
-    /* Orb 3: Purple — center-bottom, wide */
-    .cb-orb-3 {
-      width: 1000px; height: 600px;
-      background: radial-gradient(ellipse at center, rgba(139,92,246,0.85) 0%, rgba(91,33,182,0.3) 50%, transparent 70%);
-      filter: blur(110px);
-      bottom: -100px; left: 50%;
-      transform: translateX(-50%);
-      animation: cbDrift3 32s ease-in-out infinite alternate;
-    }
-
-    /* Orb 4: Indigo — left-bottom */
-    .cb-orb-4 {
-      width: 650px; height: 650px;
-      background: radial-gradient(ellipse at center, rgba(67,56,202,0.88) 0%, rgba(49,46,129,0.3) 50%, transparent 70%);
-      filter: blur(80px);
-      bottom: -50px; left: -80px;
-      animation: cbDrift4 20s ease-in-out infinite alternate;
-    }
-
-    /* Orb 5: Teal — right side */
-    .cb-orb-5 {
-      width: 600px; height: 600px;
-      background: radial-gradient(ellipse at center, rgba(14,116,144,0.75) 0%, rgba(8,145,178,0.25) 50%, transparent 70%);
-      filter: blur(95px);
-      top: 40%; right: -80px;
-      animation: cbDrift5 26s ease-in-out infinite alternate;
-    }
-
-    /* Orb 6: Pink-violet accent — upper-center */
-    .cb-orb-6 {
-      width: 500px; height: 500px;
-      background: radial-gradient(ellipse at center, rgba(167,139,250,0.7) 0%, rgba(124,58,237,0.2) 55%, transparent 70%);
-      filter: blur(70px);
-      top: 5%; left: 35%;
-      animation: cbDrift6 18s ease-in-out infinite alternate;
-    }
-
-    @keyframes cbDrift1 {
-      0%   { transform: translate(0px, 0px) scale(1); }
-      100% { transform: translate(160px, 200px) scale(1.15); }
-    }
-    @keyframes cbDrift2 {
-      0%   { transform: translate(0px, 0px) scale(1); }
-      100% { transform: translate(-180px, 160px) scale(1.1); }
-    }
-    @keyframes cbDrift3 {
-      0%   { transform: translateX(-50%) scale(1) rotate(0deg); }
-      100% { transform: translateX(calc(-50% + 100px)) scale(1.2) rotate(5deg); }
-    }
-    @keyframes cbDrift4 {
-      0%   { transform: translate(0px, 0px) scale(1); }
-      100% { transform: translate(140px, -180px) scale(1.25); }
-    }
-    @keyframes cbDrift5 {
-      0%   { transform: translate(0px, 0px) scale(1); }
-      100% { transform: translate(-120px, -150px) scale(1.15); }
-    }
-    @keyframes cbDrift6 {
-      0%   { transform: translate(0px, 0px) scale(1); }
-      100% { transform: translate(80px, 120px) scale(1.3); }
     }
 
     /* ====== NAVBAR ====== */
@@ -385,14 +298,7 @@
 <body>
 
   <!-- ColorBends Background -->
-  <div class="color-bends">
-    <div class="cb-orb cb-orb-1"></div>
-    <div class="cb-orb cb-orb-2"></div>
-    <div class="cb-orb cb-orb-3"></div>
-    <div class="cb-orb cb-orb-4"></div>
-    <div class="cb-orb cb-orb-5"></div>
-    <div class="cb-orb cb-orb-6"></div>
-  </div>
+  <canvas id="colorCanvas"></canvas>
 
   <!-- Navbar -->
   <nav id="navbar">
@@ -454,7 +360,80 @@
       navbar.classList.toggle('scrolled', window.scrollY > 20);
     });
 
-    // ColorBends는 CSS 애니메이션으로 처리됨 (color-bends divs)
+    // ====== ColorBends Canvas Animation ======
+    // screen 블렌드 모드 핵심 규칙:
+    //   그라디언트 중심 stop은 반드시 완전 불투명(rgb) 사용.
+    //   rgba(R,G,B,0.55) 같은 반투명 stop은 프리멀티플라이드 알파로
+    //   인해 색상이 거의 사라짐 → 중심은 rgb(), 가장자리만 fade to rgba(0)
+    (function () {
+      const canvas = document.getElementById('colorCanvas');
+      const ctx    = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // 6개 광구: 보라/파랑/청록 계열
+      // r = minDim의 배수 (0.4~0.65)
+      // freq는 아주 작은 값 → 느린 정현파 이동
+      const orbs = [
+        { xB:0.18, yB:0.28, xA:0.16, yA:0.13, xF:0.00040, yF:0.00030, xP:0.00, yP:1.20, r:0.60, col:[109, 40,217] }, // deep violet
+        { xB:0.75, yB:0.22, xA:0.13, yA:0.16, xF:0.00028, yF:0.00042, xP:2.00, yP:0.60, r:0.55, col:[ 37, 99,235] }, // royal blue
+        { xB:0.50, yB:0.72, xA:0.20, yA:0.12, xF:0.00022, yF:0.00050, xP:4.10, yP:3.10, r:0.65, col:[ 88, 28,135] }, // deep purple
+        { xB:0.88, yB:0.60, xA:0.11, yA:0.19, xF:0.00038, yF:0.00025, xP:1.50, yP:5.00, r:0.42, col:[  6,182,212] }, // cyan
+        { xB:0.08, yB:0.65, xA:0.11, yA:0.14, xF:0.00032, yF:0.00020, xP:3.50, yP:2.50, r:0.47, col:[ 79, 70,229] }, // indigo
+        { xB:0.55, yB:0.12, xA:0.15, yA:0.09, xF:0.00048, yF:0.00038, xP:5.50, yP:0.80, r:0.40, col:[139, 92,246] }, // light violet
+      ];
+
+      let t = 0;
+
+      function draw() {
+        const w = canvas.width;
+        const h = canvas.height;
+        const s = Math.min(w, h);
+
+        // 1) 다크 베이스
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = '#030712';
+        ctx.fillRect(0, 0, w, h);
+
+        // 2) 광구 — screen 블렌드
+        for (const o of orbs) {
+          const x = (o.xB + Math.sin(t * o.xF + o.xP) * o.xA) * w;
+          const y = (o.yB + Math.cos(t * o.yF + o.yP) * o.yA) * h;
+          const r = s * o.r;
+          const [R, G, B] = o.col;
+
+          const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+          // 핵심: 중심은 완전 불투명 → screen 모드에서 선명한 색상 발현
+          g.addColorStop(0.00, `rgb(${R},${G},${B})`);
+          g.addColorStop(0.30, `rgba(${R},${G},${B},0.80)`);
+          g.addColorStop(0.60, `rgba(${R},${G},${B},0.30)`);
+          g.addColorStop(1.00, `rgba(${R},${G},${B},0)`);
+
+          ctx.globalCompositeOperation = 'screen';
+          ctx.fillStyle = g;
+          // fillRect로 전체 캔버스에 그라디언트 적용 (arc clipping 불필요)
+          ctx.fillRect(0, 0, w, h);
+        }
+
+        // 3) 가장자리 비네트
+        ctx.globalCompositeOperation = 'source-over';
+        const vg = ctx.createRadialGradient(w*0.5, h*0.5, s*0.1, w*0.5, h*0.5, s*0.9);
+        vg.addColorStop(0, 'rgba(3,7,18,0)');
+        vg.addColorStop(1, 'rgba(3,7,18,0.60)');
+        ctx.fillStyle = vg;
+        ctx.fillRect(0, 0, w, h);
+
+        t++;
+        requestAnimationFrame(draw);
+      }
+
+      draw();
+    })();
   </script>
 </body>
 </html>
