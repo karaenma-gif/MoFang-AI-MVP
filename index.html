@@ -1267,7 +1267,8 @@
 
     .cl-traffic { display: flex; gap: 6px; }
     .cl-dot { width: 12px; height: 12px; border-radius: 50%; }
-    .cl-dot-r { background: #FF5F57; }
+    .cl-dot-r { background: #FF5F57; cursor: pointer; transition: filter 0.15s; }
+    .cl-dot-r:hover { filter: brightness(1.18); }
     .cl-dot-y { background: #FEBC2E; }
     .cl-dot-g { background: #28C840; }
 
@@ -2767,7 +2768,7 @@
   <div id="client">
     <div class="cl-titlebar">
       <div class="cl-traffic">
-        <div class="cl-dot cl-dot-r"></div>
+        <div class="cl-dot cl-dot-r" onclick="closeClient()" title="关闭"></div>
         <div class="cl-dot cl-dot-y"></div>
         <div class="cl-dot cl-dot-g"></div>
       </div>
@@ -3222,10 +3223,17 @@
 
     // ====== ACT 1: Download animation + Client open + Login flow ======
 
+    let clientHasLoggedIn = false; // 登录完成后置 true，跳过下载动画
+
     // Hero "马上开始" button click
     document.querySelector('.btn-hero-primary').addEventListener('click', function(e) {
       e.preventDefault();
-      startAct1(this);
+      if (clientHasLoggedIn) {
+        // 已登录 → 直接重开客户端，无下载动画
+        openClient();
+      } else {
+        startAct1(this);
+      }
     });
 
     function startAct1(btn) {
@@ -3454,6 +3462,9 @@
       const flow = document.getElementById('login-flow');
       const body = document.getElementById('client-body');
 
+      // 登录完成：标记已登录，移除不再需要的功能
+      clientHasLoggedIn = true;
+
       flow.style.transition = 'opacity 0.4s';
       flow.style.opacity    = '0';
 
@@ -3464,9 +3475,34 @@
         body.style.transition = 'opacity 0.45s';
         lucide.createIcons();
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => { body.style.opacity = '1'; });
+          requestAnimationFrame(() => {
+            body.style.opacity = '1';
+            // 已配置安全空间 → 移除「创建安全空间」功能卡片
+            const secCard = document.getElementById('card-security');
+            if (secCard) secCard.remove();
+          });
         });
       }, 420);
+    }
+
+    // 关闭客户端 — macOS 魔法收起效果
+    function closeClient() {
+      const client = document.getElementById('client');
+      const wrap   = document.getElementById('website-wrap');
+
+      // 覆盖过渡曲线：收起用无弹性的 ease-in，更自然
+      client.style.transition =
+        'transform 0.42s cubic-bezier(0.4, 0, 0.8, 1), opacity 0.28s ease';
+      client.classList.remove('open');
+
+      // 同步解除背景模糊
+      wrap.classList.remove('blurred');
+
+      // 动画结束后隐藏元素，并恢复默认过渡（供下次重开）
+      setTimeout(() => {
+        client.style.display    = 'none';
+        client.style.transition = '';
+      }, 460);
     }
 
     // ====== ACT 2: New tab page chat interactions ======
