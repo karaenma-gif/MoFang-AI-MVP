@@ -3251,9 +3251,9 @@
       dlIcon.style.opacity = '1';
       dlIcon.style.transform = 'scale(1)';
 
-      // Destination: bottom-right (above where toast will appear)
+      // Destination: bottom-right dock area
       const endX = window.innerWidth - 76;
-      const endY = window.innerHeight - 180;
+      const endY = window.innerHeight - 80;
       const arcHeight = 200;
       const duration  = 820;
       const startTime = performance.now();
@@ -3274,8 +3274,13 @@
         if (t < 1) {
           requestAnimationFrame(animateIcon);
         } else {
+          // 图标飞入底部后淡出，直接打开客户端
+          dlIcon.style.transition = 'opacity 0.25s ease';
           dlIcon.style.opacity = '0';
-          showDownloadProgress();
+          setTimeout(() => {
+            document.getElementById('dl-layer').style.display = 'none';
+            openClient();
+          }, 280);
         }
       }
 
