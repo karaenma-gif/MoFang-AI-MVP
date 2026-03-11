@@ -178,14 +178,28 @@
 
 ---
 
-## Git规范
+## Git 规范 & 部署
 
-每次完成一个有意义的节点必须commit，不需要等整个阶段结束：
+每次完成一个有意义的节点必须 commit + push，不需要等整个阶段结束：
 - 完成一幕的结构
 - 完成一个动画效果
-- 修复了一个影响演示的bug
+- 修复了一个影响演示的 bug
 
-**commit格式：** `feat: 第X幕 - [具体内容]` 或 `fix: [问题描述]`
+**commit 格式：** `feat: 第X幕 - [具体内容]` 或 `fix: [问题描述]`
+
+禁止攒多个改动一次 commit。不 commit 直接继续写是被禁止的行为。
+
+**部署工作流（每次 commit 后执行）：**
+
+```
+git add index.html
+git commit -m "描述"
+git push
+```
+
+push 完 Vercel 自动部署，约 30 秒后线上更新。
+
+**线上地址：** https://mofang-ai-mvp.vercel.app
 
 禁止攒多个改动一次commit。不commit直接继续写是被禁止的行为。
 
