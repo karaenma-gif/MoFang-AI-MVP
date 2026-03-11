@@ -1735,6 +1735,18 @@
       to   { opacity: 1; transform: scale(1)   translateY(0); }
     }
 
+    @keyframes toastSlideIn {
+      from { opacity: 0; transform: translateX(28px) translateY(-6px); }
+      to   { opacity: 1; transform: translateX(0)    translateY(0); }
+    }
+
+    @keyframes calPageFlip {
+      0%   { transform: rotateX(0deg);   opacity: 1; }
+      40%  { transform: rotateX(-90deg); opacity: 0.15; }
+      60%  { transform: rotateX(90deg);  opacity: 0.15; }
+      100% { transform: rotateX(0deg);   opacity: 1; }
+    }
+
     .risk-modal-icon-wrap {
       width: 54px; height: 54px;
       border-radius: 50%;
@@ -3419,10 +3431,6 @@
 
   </div><!-- /client -->
 
-  <!-- Act 7: Presenter cue (teleprompter hint for speaker) -->
-  <div id="presenter-cue" style="display:none;position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:rgba(17,18,19,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(245,158,11,0.38);border-radius:12px;padding:10px 22px;font-size:13px;font-weight:600;color:#FCD34D;z-index:800;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.65),0 0 22px rgba(245,158,11,0.1);opacity:0;transition:opacity 0.4s ease;">
-    💬 口播：「快进到一个月后...」
-  </div>
 
   <script>
     // ====== Lucide Icons ======
@@ -5284,160 +5292,191 @@
       const client = document.getElementById('client');
       if (!client) return;
 
-      const overlay = document.createElement('div');
-      overlay.id = 'act6-order-overlay';
-      overlay.style.cssText = `
-        position: absolute;
-        inset: 42px 0 0 0;
-        background: rgba(3, 7, 18, 0.62);
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-        z-index: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      `;
-      overlay.innerHTML = `
-        <div style="
-          background: rgba(17,18,19,0.96);
-          backdrop-filter: blur(20px) saturate(180%);
-          -webkit-backdrop-filter: blur(20px) saturate(180%);
-          border: 1px solid rgba(16,185,129,0.3);
-          border-radius: 22px;
-          padding: 34px 32px 28px;
-          text-align: center;
-          box-shadow:
-            0 0 0 1px rgba(16,185,129,0.1),
-            0 28px 70px rgba(0,0,0,0.9),
-            0 0 70px rgba(16,185,129,0.16);
-          animation: riskModalIn 0.52s cubic-bezier(0.34,1.4,0.64,1) both;
-          width: 290px;
-        ">
-          <div style="width:56px;height:56px;border-radius:50%;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.28);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-            <i data-lucide="shopping-bag" style="width:24px;height:24px;color:#34D399;"></i>
-          </div>
-          <div style="display:inline-flex;align-items:center;gap:6px;padding:3px 12px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:100px;font-size:10.5px;font-weight:700;color:#34D399;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">新订单</div>
-          <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:10px;">你有一笔新订单！</div>
-          <div style="font-size:46px;font-weight:800;color:#34D399;letter-spacing:-2px;line-height:1.1;margin-bottom:18px;">$16.5</div>
-          <div style="font-size:12px;color:var(--text-secondary);line-height:1.85;margin-bottom:24px;">
-            磁吸调料架 × 1<br>
-            <span style="color:var(--text-dim);">来自 @tidyhome_tips 的视频推广</span>
-          </div>
-          <button onclick="dismissOrderNotification()" style="width:100%;padding:13px;background:rgba(16,185,129,1);border:none;border-radius:11px;font-size:14px;font-weight:600;color:white;cursor:pointer;letter-spacing:0.2px;box-shadow:0 0 24px rgba(16,185,129,0.38);transition:opacity 0.18s;">
-            太棒了！查看订单
-          </button>
-        </div>
-      `;
-      client.appendChild(overlay);
-      lucide.createIcons({ nodes: [overlay] });
-
-      // AI celebrates in chat
+      // AI celebrates in chat first
       const msgs = document.getElementById('act5-messages');
       if (msgs) {
         setTimeout(() => {
           const el = buildMsgEl({ type: 'ai', text: '恭喜潼潼！🎉 第一笔订单来了！视频发布后 <strong style="color:rgba(255,255,255,0.95);">2 小时内</strong>促成了成交，开门红！' });
           msgs.appendChild(el);
           msgs.scrollTop = msgs.scrollHeight;
-        }, 500);
+        }, 400);
       }
-    }
 
-    function dismissOrderNotification() {
-      const overlay = document.getElementById('act6-order-overlay');
-      if (overlay) {
-        overlay.style.transition = 'opacity 0.3s ease';
-        overlay.style.opacity = '0';
-        setTimeout(() => { overlay.remove(); startAct7(); }, 320);
-      }
+      // Small corner toast — non-blocking, appears top-right
+      const toast = document.createElement('div');
+      toast.id = 'act6-order-toast';
+      toast.title = '点击快进到一个月后';
+      toast.style.cssText = `
+        position: absolute;
+        top: 52px;
+        right: 14px;
+        background: rgba(14,20,16,0.97);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(16,185,129,0.35);
+        border-radius: 14px;
+        padding: 11px 14px 11px 12px;
+        z-index: 750;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        min-width: 190px;
+        box-shadow:
+          0 0 0 1px rgba(16,185,129,0.06),
+          0 8px 28px rgba(0,0,0,0.75),
+          0 0 22px rgba(16,185,129,0.14);
+        animation: toastSlideIn 0.42s cubic-bezier(0.16,1,0.3,1) both;
+        user-select: none;
+      `;
+      toast.innerHTML = `
+        <div style="width:34px;height:34px;border-radius:50%;background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i data-lucide="shopping-bag" style="width:15px;height:15px;color:#34D399;"></i>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:10px;font-weight:700;color:#34D399;letter-spacing:0.8px;text-transform:uppercase;">新订单</div>
+          <div style="font-size:20px;font-weight:800;color:var(--text-primary);letter-spacing:-0.8px;line-height:1.15;">$16.5</div>
+          <div style="font-size:9.5px;color:var(--text-dim);margin-top:1px;">点击 · 快进到一个月后 →</div>
+        </div>
+      `;
+
+      toast.onclick = function() {
+        if (toast._clicked) return;
+        toast._clicked = true;
+        toast.style.transition = 'opacity 0.28s ease, transform 0.28s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(18px)';
+        setTimeout(() => { toast.remove(); showCalendarFlip(); }, 280);
+      };
+
+      client.appendChild(toast);
+      lucide.createIcons({ nodes: [toast] });
     }
 
     // ====== ACT 7: 快进到一个月后 ======
 
     function startAct7() {
-      // Show presenter cue
-      const cue = document.getElementById('presenter-cue');
-      if (cue) {
-        cue.style.display = 'block';
-        requestAnimationFrame(() => requestAnimationFrame(() => { cue.style.opacity = '1'; }));
-      }
-      // Launch calendar flip after brief pause
-      setTimeout(showCalendarFlip, 1000);
+      // Calendar flip triggered directly from toast click (showCalendarFlip called there)
+      // This function kept as entry point for any legacy calls
+      showCalendarFlip();
     }
 
     function showCalendarFlip() {
       const client = document.getElementById('client');
       if (!client) return;
 
+      // Milestones to show — each entry: [day, label, pauseMs]
+      const milestones = [
+        [1,  '第 1 天 · 开门红 🎉',  600],
+        [7,  '第 7 天 · 满一周',      600],
+        [14, '第 14 天 · 两周里程碑', 600],
+        [21, '第 21 天 · 三周',       600],
+        [30, '第 30 天 · 满月 ✨',    1200],
+      ];
+
       const overlay = document.createElement('div');
       overlay.id = 'act7-cal-overlay';
       overlay.style.cssText = `
         position: absolute; inset: 42px 0 0 0;
-        background: rgba(7,8,10,0.93);
+        background: rgba(5,7,9,0.94);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
         z-index: 700;
         display: flex; align-items: center; justify-content: center;
       `;
       overlay.innerHTML = `
         <div style="text-align:center;">
-          <div style="font-size:11px;font-weight:700;color:var(--text-dim);letter-spacing:1.4px;text-transform:uppercase;margin-bottom:18px;">时间快进</div>
-          <div style="position:relative;width:110px;height:122px;margin:0 auto;background:rgba(20,20,26,0.98);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;align-items:center;box-shadow:0 16px 40px rgba(0,0,0,0.7);">
-            <div style="width:100%;height:8px;background:rgba(239,68,68,0.75);flex-shrink:0;"></div>
-            <div id="cal-month-label" style="font-size:10.5px;font-weight:600;color:var(--text-secondary);margin-top:8px;margin-bottom:4px;">March 2026</div>
-            <div id="cal-day-num" style="font-size:52px;font-weight:800;color:var(--text-primary);letter-spacing:-2px;line-height:1;"></div>
+          <div style="font-size:10.5px;font-weight:700;color:var(--text-dim);letter-spacing:1.6px;text-transform:uppercase;margin-bottom:20px;">时间快进</div>
+
+          <!-- Calendar card -->
+          <div style="perspective:600px;width:120px;margin:0 auto;">
+            <div id="cal-card" style="
+              width:120px; height:134px;
+              background: linear-gradient(160deg,rgba(24,24,32,1),rgba(18,18,24,1));
+              border:1px solid rgba(255,255,255,0.1);
+              border-radius:16px;
+              overflow:hidden;
+              display:flex; flex-direction:column; align-items:center;
+              box-shadow: 0 20px 48px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.04);
+              transform-origin: center center;
+            ">
+              <!-- Red strip (calendar binding) -->
+              <div style="width:100%;height:10px;background:linear-gradient(90deg,rgba(220,40,40,0.9),rgba(239,68,68,0.75));flex-shrink:0;position:relative;">
+                <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:18px;height:5px;background:rgba(180,30,30,0.8);border-radius:2px;"></div>
+              </div>
+              <!-- Month label -->
+              <div id="cal-month-lbl" style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:1px;text-transform:uppercase;margin-top:8px;">APRIL 2026</div>
+              <!-- Day number -->
+              <div id="cal-day-num" style="font-size:58px;font-weight:900;color:var(--text-primary);letter-spacing:-3px;line-height:1;margin-top:4px;transform-origin:center;"></div>
+            </div>
           </div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:16px;" id="cal-label">准备中…</div>
+
+          <!-- Milestone label -->
+          <div id="cal-milestone-lbl" style="font-size:11.5px;color:var(--text-dim);margin-top:18px;height:16px;transition:opacity 0.3s;"> </div>
         </div>
       `;
       client.appendChild(overlay);
 
-      const dayEl   = overlay.querySelector('#cal-day-num');
-      const lblEl   = overlay.querySelector('#cal-label');
-      let day = 1;
+      const cardEl = overlay.querySelector('#cal-card');
+      const dayEl  = overlay.querySelector('#cal-day-num');
+      const lblEl  = overlay.querySelector('#cal-milestone-lbl');
+      let mIdx = 0;
 
-      function flipDay() {
-        // Slide out
-        dayEl.style.transition = 'opacity 0.04s ease, transform 0.04s ease';
-        dayEl.style.opacity = '0';
-        dayEl.style.transform = 'translateY(-10px)';
+      function flipToMilestone() {
+        if (mIdx >= milestones.length) {
+          // All done — fade out and auto-open workbench (full replacement, since Act 5 broke tabMgr)
+          setTimeout(() => {
+            overlay.style.transition = 'opacity 0.55s ease';
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+              overlay.remove();
+              openWorkbench();
+            }, 560);
+          }, 400);
+          return;
+        }
+
+        const [day, label, pauseMs] = milestones[mIdx];
+        mIdx++;
+
+        // Phase 1: flip card (top-fold animation)
+        cardEl.style.transition = 'transform 0.18s ease-in';
+        cardEl.style.transform = 'rotateX(-15deg) scaleY(0.92)';
 
         setTimeout(() => {
+          // Update number mid-flip
           dayEl.textContent = day;
-          dayEl.style.transition = 'none';
-          dayEl.style.transform = 'translateY(10px)';
-          // Slide in
-          requestAnimationFrame(() => {
-            dayEl.style.transition = 'opacity 0.05s ease, transform 0.05s ease';
+          dayEl.style.opacity = '0';
+          dayEl.style.transform = 'translateY(8px)';
+
+          // Phase 2: snap back
+          cardEl.style.transition = 'transform 0.22s cubic-bezier(0.34,1.4,0.64,1)';
+          cardEl.style.transform = 'rotateX(0deg) scaleY(1)';
+
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            dayEl.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
             dayEl.style.opacity = '1';
             dayEl.style.transform = 'translateY(0)';
-          });
-          if (day === 1)  lblEl.textContent = '第 1 天…';
-          if (day === 15) lblEl.textContent = '第 15 天…';
-          if (day === 30) lblEl.textContent = '第 30 天 · 满月！';
+          }));
 
-          if (day < 30) { day++; setTimeout(flipDay, 68); }
-          else {
-            setTimeout(() => {
-              overlay.style.transition = 'opacity 0.5s ease';
-              overlay.style.opacity = '0';
-              setTimeout(() => { overlay.remove(); highlightUserAvatar(); }, 520);
-            }, 900);
-          }
-        }, 45);
+          // Update label
+          lblEl.style.opacity = '0';
+          setTimeout(() => {
+            lblEl.textContent = label;
+            lblEl.style.opacity = '1';
+          }, 180);
+
+          // Wait pauseMs then flip to next milestone
+          setTimeout(flipToMilestone, pauseMs);
+        }, 160);
       }
 
-      setTimeout(flipDay, 400);
-    }
+      // First milestone appears immediately (no flip from nothing)
+      dayEl.textContent = milestones[0][0];
+      lblEl.textContent = milestones[0][1];
+      mIdx = 1; // start from second milestone on next flip
 
-    function highlightUserAvatar() {
-      // Dismiss presenter cue
-      const cue = document.getElementById('presenter-cue');
-      if (cue) { cue.style.opacity = '0'; setTimeout(() => { cue.style.display = 'none'; }, 420); }
-
-      // Show and pulse avatar button
-      const btn = document.getElementById('cl-user-btn');
-      if (!btn) return;
-      btn.style.display = 'flex';
-      lucide.createIcons({ nodes: [btn] });
-      setTimeout(() => btn.classList.add('pulsing'), 100);
+      setTimeout(flipToMilestone, milestones[0][2]);
     }
 
     function openWorkbench() {
