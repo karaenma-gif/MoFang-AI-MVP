@@ -3068,7 +3068,7 @@
             <i data-lucide="chevron-right" style="width:13px;height:13px;opacity:0.3;"></i>
           </div>
           <div class="cl-url-bar" id="cl-url-bar" onclick="startAct3()" style="cursor:pointer;" title="点击演示风险拦截流程">新标签页</div>
-          <div class="cl-magic-btn">
+          <div class="cl-magic-btn" onclick="reopenChat()">
             <i data-lucide="sparkles" style="width:10px;height:10px;"></i>
             魔方 Chat
           </div>
@@ -3696,6 +3696,7 @@
           requestAnimationFrame(() => {
             body.style.opacity = '1';
             tabMgr.init();
+            document.getElementById('cl-chat-side').classList.add('open');
           });
         });
       }, 420);
@@ -3794,6 +3795,10 @@
     function closeChat() {
       document.getElementById('cl-chat-side').classList.remove('open');
       document.querySelectorAll('.cl-feature-card').forEach(c => c.classList.remove('active'));
+    }
+
+    function reopenChat() {
+      document.getElementById('cl-chat-side').classList.add('open');
     }
 
     function buildMsgEl(msg) {
