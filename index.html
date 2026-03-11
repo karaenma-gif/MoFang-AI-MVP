@@ -1364,42 +1364,44 @@
 
     .cl-tab-panel.hidden { display: none; }
 
-    /* ====== ACT 3: RISK GLOW STATES — inner-edge overlay ====== */
-    #client-body {
-      position: relative; /* anchor for risk-glow-overlay */
-    }
+    /* ====== ACT 3: RISK GLOW STATES — scoped to .cl-browser-area only ====== */
 
+    /* Glow overlay: inset box-shadow, constrained within browser area */
     #risk-glow-overlay {
       position: absolute;
       inset: 0;
       pointer-events: none;
       z-index: 10;
-      opacity: 0;
-      transition: opacity 0.55s ease;
+      transition: box-shadow 0.8s ease-in-out;
     }
 
     #risk-glow-overlay.risk-yellow {
-      opacity: 1;
-      background:
-        linear-gradient(to right,  rgba(234,179,8,0.45) 0%, transparent 80px),
-        linear-gradient(to left,   rgba(234,179,8,0.45) 0%, transparent 80px),
-        linear-gradient(to bottom, rgba(234,179,8,0.45) 0%, transparent 80px),
-        linear-gradient(to top,    rgba(234,179,8,0.45) 0%, transparent 80px);
+      box-shadow:
+        inset 0 0 90px rgba(234, 179, 8, 0.42),
+        inset 0 0 36px rgba(234, 179, 8, 0.22);
     }
 
     #risk-glow-overlay.risk-red {
-      opacity: 1;
-      background:
-        linear-gradient(to right,  rgba(239,68,68,0.65) 0%, transparent 80px),
-        linear-gradient(to left,   rgba(239,68,68,0.65) 0%, transparent 80px),
-        linear-gradient(to bottom, rgba(239,68,68,0.65) 0%, transparent 80px),
-        linear-gradient(to top,    rgba(239,68,68,0.65) 0%, transparent 80px);
       animation: glowPulse 1.2s ease-in-out infinite;
     }
 
     @keyframes glowPulse {
-      0%, 100% { opacity: 0.5; }
-      50%       { opacity: 1;   }
+      0%, 100% {
+        box-shadow:
+          inset 0 0 90px rgba(239, 68, 68, 0.48),
+          inset 0 0 36px rgba(239, 68, 68, 0.28);
+      }
+      50% {
+        box-shadow:
+          inset 0 0 130px rgba(239, 68, 68, 0.75),
+          inset 0 0 55px rgba(239, 68, 68, 0.52);
+      }
+    }
+
+    /* Icon pulse for risk modal (replaces removed dangerPulse) */
+    @keyframes iconPulse {
+      0%, 100% { box-shadow: 0 0 0 0   rgba(239, 68, 68, 0.35); transform: scale(1);    }
+      50%       { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);   transform: scale(1.06); }
     }
 
     /* ====== TikTok Login Mock ====== */
@@ -1507,15 +1509,15 @@
       transition: opacity 0.4s;
     }
 
-    /* ====== RISK MODAL ====== */
+    /* ====== RISK MODAL — lives inside .cl-browser-area ====== */
     #risk-overlay {
       display: none;
       position: absolute;
-      inset: 42px 0 0 0;
-      background: rgba(3, 7, 18, 0.55);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 600;
+      inset: 0;                        /* relative to .cl-browser-area */
+      background: rgba(3, 7, 18, 0.38);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 20;                     /* above glow (z:10), below nothing */
       align-items: center;
       justify-content: center;
     }
@@ -1549,7 +1551,7 @@
       border: 1px solid rgba(239,68,68,0.28);
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 16px;
-      animation: dangerPulse 1.7s ease-in-out infinite;
+      animation: iconPulse 1.7s ease-in-out infinite;
     }
 
     .risk-badge {
@@ -1668,6 +1670,7 @@
       flex-direction: column;
       overflow: hidden;
       min-width: 0;
+      position: relative; /* anchor for #risk-glow-overlay and #risk-overlay */
     }
 
     .cl-address-bar {
@@ -3155,6 +3158,46 @@
 
         </div><!-- /cl-tab-panel-0 -->
 
+        <!-- Act 3: inset glow — scoped inside .cl-browser-area, pointer-events:none -->
+        <div id="risk-glow-overlay"></div>
+
+        <!-- Act 3: Risk Warning Modal — centered within .cl-browser-area -->
+        <div id="risk-overlay">
+          <div id="risk-modal-card">
+            <div class="risk-modal-icon-wrap">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <div class="risk-badge">⚠ 高风险操作</div>
+            <div class="risk-modal-title">你的账号正处于风险中</div>
+            <div class="risk-modal-desc">
+              74% 的用户在无安全空间下登录会被平台封控，你当前的操作暴露了真实设备信息。
+            </div>
+            <div class="risk-indicators">
+              <div class="risk-ind-row">
+                <div class="risk-dot-red"></div>
+                真实 IP 地址已暴露
+              </div>
+              <div class="risk-ind-row">
+                <div class="risk-dot-red"></div>
+                设备指纹未隔离，账号关联风险极高
+              </div>
+              <div class="risk-ind-row">
+                <div class="risk-dot-red"></div>
+                同 IP 下检测到 3 个关联账号
+              </div>
+            </div>
+            <button class="risk-btn-primary" onclick="enterAct4()">
+              <i data-lucide="shield-check" style="width:15px;height:15px;"></i>
+              立即创建安全空间
+            </button>
+            <button class="risk-btn-secondary" onclick="dismissRisk()">继续（不推荐）</button>
+          </div>
+        </div>
+
       </div><!-- /cl-browser-area -->
 
       <!-- AI Chat panel (slides in on card click) -->
@@ -3179,47 +3222,9 @@
         </div>
       </div><!-- /cl-chat-side -->
 
-      <!-- Act 3: inner-edge glow overlay (pointer-events:none) -->
-      <div id="risk-glow-overlay"></div>
-
     </div><!-- /client-body -->
 
-    <!-- Act 3: Risk Warning Modal (absolute within #client) -->
-    <div id="risk-overlay">
-      <div id="risk-modal-card">
-        <div class="risk-modal-icon-wrap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-        </div>
-        <div class="risk-badge">⚠ 高风险操作</div>
-        <div class="risk-modal-title">你的账号正处于风险中</div>
-        <div class="risk-modal-desc">
-          74% 的用户在无安全空间下登录会被平台封控，你当前的操作暴露了真实设备信息。
-        </div>
-        <div class="risk-indicators">
-          <div class="risk-ind-row">
-            <div class="risk-dot-red"></div>
-            真实 IP 地址已暴露
-          </div>
-          <div class="risk-ind-row">
-            <div class="risk-dot-red"></div>
-            设备指纹未隔离，账号关联风险极高
-          </div>
-          <div class="risk-ind-row">
-            <div class="risk-dot-red"></div>
-            同 IP 下检测到 3 个关联账号
-          </div>
-        </div>
-        <button class="risk-btn-primary" onclick="enterAct4()">
-          <i data-lucide="shield-check" style="width:15px;height:15px;"></i>
-          立即创建安全空间
-        </button>
-        <button class="risk-btn-secondary" onclick="dismissRisk()">继续（不推荐）</button>
-      </div>
-    </div>
+
 
   </div><!-- /client -->
 
