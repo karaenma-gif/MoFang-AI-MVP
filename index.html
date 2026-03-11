@@ -3719,6 +3719,7 @@
       },
 
       addBlankTab() {
+        if (window._clientMode === 'act') { _exitActMode(() => tabMgr.addBlankTab()); return; }
         this.add('新标签页', 'rgba(255,255,255,0.15)', panel => {
           panel.innerHTML = `
             <div class="cl-newtab">
@@ -3763,6 +3764,27 @@
         });
       }
     };
+
+    // ====== Free Interaction: exit act mode, restore main interface ======
+    function _exitActMode(callback) {
+      const body = document.getElementById('client-body');
+      if (!window._mainIfaceHTML || !body) { if (callback) callback(); return; }
+
+      body.style.transition = 'opacity 0.26s ease';
+      body.style.opacity = '0';
+
+      setTimeout(() => {
+        body.innerHTML = window._mainIfaceHTML;
+        window._clientMode = 'main';
+        act3Started = false; // allow demo replay from URL bar
+        body.style.opacity = '1';
+        tabMgr.init();
+        lucide.createIcons({ nodes: [body] });
+        const chatSide = document.getElementById('cl-chat-side');
+        if (chatSide) chatSide.classList.add('open');
+        if (callback) setTimeout(callback, 60);
+      }, 280);
+    }
 
     function openClient() {
       // Blur website behind client
@@ -3856,6 +3878,9 @@
             body.style.opacity = '1';
             tabMgr.init();
             document.getElementById('cl-chat-side').classList.add('open');
+            // Snapshot main interface HTML for free-interaction restore
+            if (!window._mainIfaceHTML) window._mainIfaceHTML = body.innerHTML;
+            window._clientMode = 'main';
           });
         });
       }, 420);
@@ -4092,6 +4117,7 @@
       const body = document.getElementById('client-body');
       body.style.transition = 'opacity 0.4s ease';
       body.style.opacity    = '0';
+      window._clientMode = 'act';
 
       setTimeout(() => {
         body.innerHTML = `
@@ -4245,6 +4271,7 @@
       const body = document.getElementById('client-body');
       body.style.transition = 'opacity 0.4s ease';
       body.style.opacity = '0';
+      window._clientMode = 'act';
 
       setTimeout(() => {
         body.innerHTML = `
@@ -5636,6 +5663,7 @@
     }
 
     function openWorkbenchTab() {
+      if (window._clientMode === 'act') { _exitActMode(() => openWorkbenchTab()); return; }
       // Stop avatar pulsing
       const btn = document.getElementById('cl-user-btn');
       if (btn) btn.classList.remove('pulsing');
