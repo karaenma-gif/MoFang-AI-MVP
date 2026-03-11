@@ -3622,58 +3622,7 @@
 
     function completeLogin() {
       if (selectedSurvey === -1) return;
-
-      const flow = document.getElementById('login-flow');
-      flow.style.transition = 'opacity 0.4s';
-      flow.style.opacity    = '0';
-
-      setTimeout(() => {
-        // Show animated setup screen
-        flow.innerHTML = `
-          <div id="setup-screen">
-            <div style="width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;">
-              <svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='rgba(230,230,230,0.9)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>
-            </div>
-            <div>
-              <div id="setup-title" style="font-size:18px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;margin-bottom:6px;">正在配置安全空间…</div>
-              <div id="setup-steps" style="font-size:13px;color:var(--text-secondary);line-height:1.7;">初始化中…</div>
-            </div>
-            <div class="setup-progress-track">
-              <div id="setup-bar"></div>
-            </div>
-            <div id="setup-hint" style="font-size:11px;color:var(--text-dim);">账号永远不会被平台关联</div>
-          </div>
-        `;
-        flow.style.opacity = '1';
-
-        // Step-by-step progress animation
-        const steps = [
-          [18,  '初始化浏览器隔离层…'],
-          [36,  '配置独立网络环境…'],
-          [54,  '加密存储账号数据…'],
-          [72,  '同步 Chrome 浏览器数据…'],
-          [90,  '校验安全空间完整性…'],
-          [100, '安全空间已就绪 ✓'],
-        ];
-        const bar      = document.getElementById('setup-bar');
-        const stepsEl  = document.getElementById('setup-steps');
-        const titleEl  = document.getElementById('setup-title');
-
-        let i = 0;
-        function runStep() {
-          if (i >= steps.length) return;
-          const [pct, text] = steps[i++];
-          bar.style.width  = pct + '%';
-          stepsEl.textContent = text;
-          if (pct === 100) {
-            titleEl.textContent = '安全空间配置完成！';
-            setTimeout(showMainInterface, 900);
-            return;
-          }
-          setTimeout(runStep, 480 + Math.random() * 160);
-        }
-        setTimeout(runStep, 300);
-      }, 400);
+      showMainInterface();
     }
 
     function showMainInterface() {
