@@ -1892,18 +1892,48 @@
       border-radius: 5px;
       display: flex; align-items: center; justify-content: center;
       color: var(--text-dim);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
     }
+    .cl-nav-btn-sm:hover { background: rgba(255,255,255,0.07); color: var(--text-secondary); }
+    .cl-nav-btn-sm.disabled { opacity: 0.28; cursor: default; pointer-events: none; }
 
     .cl-url-bar {
       flex: 1;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.07);
       border-radius: 6px;
-      padding: 4px 10px;
+      padding: 4px 10px 4px 8px;
       font-size: 11.5px;
       color: var(--text-secondary);
       font-family: 'SF Mono', 'Menlo', monospace;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
     }
+    .cl-url-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .cl-addr-lock {
+      color: rgba(52,211,153,0.7);
+      flex-shrink: 0;
+      display: flex; align-items: center;
+    }
+    .cl-bookmark-btn {
+      width: 22px; height: 22px; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-dim); cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .cl-bookmark-btn:hover { background: rgba(255,255,255,0.07); color: #FCD34D; }
+    .cl-bookmark-btn.active { color: #FCD34D; }
+
+    @keyframes reloadSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    .cl-nav-btn-sm.reloading i { animation: reloadSpin 0.5s linear; }
 
     .cl-magic-btn {
       display: flex;
@@ -3270,13 +3300,28 @@
 
         <!-- Address bar -->
         <div class="cl-address-bar">
-          <div class="cl-nav-btn-sm">
-            <i data-lucide="chevron-left" style="width:13px;height:13px;opacity:0.3;"></i>
+          <!-- Back / Forward -->
+          <div class="cl-nav-btn-sm disabled" id="cl-nav-back" title="后退">
+            <i data-lucide="chevron-left" style="width:13px;height:13px;"></i>
           </div>
-          <div class="cl-nav-btn-sm">
-            <i data-lucide="chevron-right" style="width:13px;height:13px;opacity:0.3;"></i>
+          <div class="cl-nav-btn-sm disabled" id="cl-nav-fwd" title="前进">
+            <i data-lucide="chevron-right" style="width:13px;height:13px;"></i>
           </div>
-          <div class="cl-url-bar" id="cl-url-bar" onclick="startAct3()" style="cursor:pointer;" title="点击演示风险拦截流程">新标签页</div>
+          <!-- Reload -->
+          <div class="cl-nav-btn-sm" id="cl-reload-btn" onclick="clReload()" title="刷新">
+            <i data-lucide="refresh-cw" style="width:12px;height:12px;"></i>
+          </div>
+          <!-- URL bar: lock icon + text + bookmark -->
+          <div class="cl-url-bar" id="cl-url-bar" onclick="startAct3()" style="cursor:pointer;" title="点击演示风险拦截流程">
+            <span class="cl-addr-lock" id="cl-addr-lock">
+              <i data-lucide="lock" style="width:10px;height:10px;"></i>
+            </span>
+            <span class="cl-url-text" id="cl-url-text">新标签页</span>
+          </div>
+          <!-- Bookmark -->
+          <div class="cl-bookmark-btn" id="cl-bookmark-btn" onclick="clToggleBookmark()" title="收藏">
+            <i data-lucide="star" style="width:12px;height:12px;"></i>
+          </div>
           <div class="cl-magic-btn" onclick="reopenChat()">
             <i data-lucide="sparkles" style="width:10px;height:10px;"></i>
             魔方 Chat
@@ -3786,6 +3831,53 @@
       }, 280);
     }
 
+    // ====== Browser helper functions ======
+
+    // Update URL bar text and security indicator
+    function clSetUrl(text, secure) {
+      const urlText = document.getElementById('cl-url-text');
+      const lockEl  = document.getElementById('cl-addr-lock');
+      if (urlText) urlText.textContent = text;
+      if (lockEl) {
+        if (!text || text === '新标签页') {
+          lockEl.style.opacity = '0.3';
+          lockEl.style.color = 'var(--text-dim)';
+        } else if (secure !== false) {
+          lockEl.style.opacity = '1';
+          lockEl.style.color = 'rgba(52,211,153,0.8)';
+        } else {
+          lockEl.style.opacity = '0.7';
+          lockEl.style.color = '#F87171';
+        }
+      }
+    }
+
+    // Reload current tab
+    function clReload() {
+      const btn = document.getElementById('cl-reload-btn');
+      if (btn) {
+        btn.classList.add('reloading');
+        setTimeout(() => btn.classList.remove('reloading'), 520);
+      }
+    }
+
+    // Toggle bookmark star
+    function clToggleBookmark() {
+      const btn = document.getElementById('cl-bookmark-btn');
+      if (!btn) return;
+      btn.classList.toggle('active');
+      const icon = btn.querySelector('i');
+      if (icon) {
+        const filled = btn.classList.contains('active');
+        icon.setAttribute('data-lucide', filled ? 'star' : 'star');
+        icon.style.fill = filled ? '#FCD34D' : 'none';
+        icon.style.color = filled ? '#FCD34D' : '';
+        // Pop scale feedback
+        btn.style.transform = 'scale(1.35)';
+        setTimeout(() => { btn.style.transform = ''; }, 180);
+      }
+    }
+
     function openClient() {
       // Blur website behind client
       document.getElementById('website-wrap').classList.add('blurred');
@@ -4014,6 +4106,7 @@
       act3Started = true;
 
       const urlBar = document.getElementById('cl-url-bar');
+      const urlText = document.getElementById('cl-url-text') || urlBar;
 
       // Step 1: Type "tiktok.com" in URL bar char by char
       const targetUrl = 'tiktok.com';
@@ -4023,11 +4116,15 @@
       function typeChar() {
         if (charIdx < targetUrl.length) {
           typed += targetUrl[charIdx++];
-          urlBar.textContent = typed;
+          urlText.textContent = typed;
           setTimeout(typeChar, 75 + Math.random() * 45);
         } else {
           // Typing done — show TikTok page + yellow glow
           setTimeout(() => {
+            clSetUrl('tiktok.com', false); // mark as non-secure
+            // Enable back button (we navigated)
+            const backBtn = document.getElementById('cl-nav-back');
+            if (backBtn) backBtn.classList.remove('disabled');
             // Hide new tab, show TikTok mock
             document.querySelector('.cl-newtab').style.display = 'none';
             const mock = document.getElementById('tiktok-mock');
@@ -5676,8 +5773,7 @@
       if (existing) { tabMgr.setActive(existing.id); return; }
 
       // Update address bar
-      const urlBar = document.getElementById('cl-url-bar');
-      if (urlBar) urlBar.textContent = 'workbench.mofangai.com · 我的工作台';
+      clSetUrl('workbench.mofangai.com · 我的工作台', true);
 
       const navItems = [
         ['trending-up',  '智能选品'],
