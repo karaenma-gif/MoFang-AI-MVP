@@ -1279,6 +1279,91 @@
       margin-left: 8px;
     }
 
+    /* ====== CLIENT TAB BAR ====== */
+    #cl-tab-bar {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin: 0 4px;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .cl-tab-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 7px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-dim);
+      background: none;
+      cursor: pointer;
+      max-width: 180px;
+      min-width: 80px;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+    }
+
+    .cl-tab-item:hover { background: rgba(255,255,255,0.05); color: var(--text-secondary); }
+
+    .cl-tab-item.active {
+      background: rgba(255,255,255,0.09);
+      color: var(--text-primary);
+    }
+
+    .cl-tab-favicon {
+      width: 12px; height: 12px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+
+    .cl-tab-close {
+      margin-left: auto;
+      opacity: 0;
+      font-size: 12px;
+      line-height: 1;
+      color: var(--text-dim);
+      padding: 1px 3px;
+      border-radius: 3px;
+      transition: opacity 0.12s, background 0.12s;
+      flex-shrink: 0;
+    }
+
+    .cl-tab-item:hover .cl-tab-close,
+    .cl-tab-item.active .cl-tab-close { opacity: 1; }
+
+    .cl-tab-close:hover { background: rgba(255,255,255,0.12); color: var(--text-primary); }
+
+    .cl-tab-add {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 15px;
+      line-height: 1;
+      color: rgba(255,255,255,0.25);
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .cl-tab-add:hover { color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.06); }
+
+    /* Tab panel content wrapper */
+    .cl-tab-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .cl-tab-panel.hidden { display: none; }
+
     /* ====== ACT 3: RISK GLOW STATES ====== */
     .cl-browser-area {
       transition: box-shadow 0.55s ease;
@@ -2772,9 +2857,10 @@
         <div class="cl-dot cl-dot-y"></div>
         <div class="cl-dot cl-dot-g"></div>
       </div>
-      <span class="cl-window-title">魔方AI</span>
-      <!-- Act 7: user avatar (shown after calendar flip) -->
-      <div id="cl-user-btn" onclick="openWorkbench()" title="我的工作台">
+      <!-- Tab bar -->
+      <div id="cl-tab-bar"></div>
+      <!-- User avatar button -->
+      <div id="cl-user-btn" onclick="openWorkbenchTab()" title="我的工作台">
         <i data-lucide="user" style="width:13px;height:13px;color:var(--text-secondary);"></i>
       </div>
     </div>
@@ -2988,6 +3074,9 @@
           </div>
         </div>
 
+        <!-- Tab panel 0 (main content) -->
+        <div class="cl-tab-panel" id="cl-tab-panel-0">
+
         <!-- New tab page -->
         <div class="cl-newtab">
           <div class="cl-newtab-brand">跨境电商经营大脑 · 魔方AI</div>
@@ -3060,6 +3149,8 @@
             <button class="tk-login-btn" id="tk-login-btn" style="opacity:0.45;">登录</button>
           </div>
         </div>
+
+        </div><!-- /cl-tab-panel-0 -->
 
       </div><!-- /cl-browser-area -->
 
@@ -3341,6 +3432,128 @@
       }, 380);
     }
 
+    // ====== TAB MANAGER ======
+    const tabMgr = {
+      tabs: [],
+      nextId: 1,
+      activeId: 0,
+
+      init() {
+        this.tabs = [{ id: 0, label: '新标签页', favicon: 'rgba(255,255,255,0.15)' }];
+        this.activeId = 0;
+        this.render();
+      },
+
+      add(label, favicon, buildPanel) {
+        const id = this.nextId++;
+        this.tabs.push({ id, label, favicon: favicon || 'rgba(255,255,255,0.15)' });
+
+        // Create panel in browser area
+        const browser = document.querySelector('#client-body .cl-browser-area');
+        if (browser && buildPanel) {
+          const panel = document.createElement('div');
+          panel.className = 'cl-tab-panel hidden';
+          panel.id = 'cl-tab-panel-' + id;
+          // Insert before cl-chat-side (i.e. still inside browser area)
+          browser.insertBefore(panel, null);
+          buildPanel(panel);
+        }
+
+        this.setActive(id);
+      },
+
+      setActive(id) {
+        this.activeId = id;
+        // Show/hide panels
+        this.tabs.forEach(t => {
+          const p = document.getElementById('cl-tab-panel-' + t.id);
+          if (!p) return;
+          p.classList.toggle('hidden', t.id !== id);
+        });
+        this.render();
+      },
+
+      close(id) {
+        if (this.tabs.length <= 1) return;
+        const idx = this.tabs.findIndex(t => t.id === id);
+        // Remove panel
+        const p = document.getElementById('cl-tab-panel-' + id);
+        if (p) p.remove();
+        this.tabs.splice(idx, 1);
+        if (this.activeId === id) {
+          const next = this.tabs[Math.min(idx, this.tabs.length - 1)];
+          this.setActive(next.id);
+        } else {
+          this.render();
+        }
+      },
+
+      updateLabel(id, label) {
+        const t = this.tabs.find(t => t.id === id);
+        if (t) { t.label = label; this.render(); }
+      },
+
+      render() {
+        const bar = document.getElementById('cl-tab-bar');
+        if (!bar) return;
+        bar.innerHTML = this.tabs.map(t => `
+          <div class="cl-tab-item${t.id === this.activeId ? ' active' : ''}"
+               onclick="tabMgr.setActive(${t.id})" data-tab="${t.id}">
+            <div class="cl-tab-favicon" style="background:${t.favicon};"></div>
+            <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">${t.label}</span>
+            ${this.tabs.length > 1
+              ? `<span class="cl-tab-close" onclick="event.stopPropagation();tabMgr.close(${t.id})">×</span>`
+              : ''}
+          </div>
+        `).join('') + `<div class="cl-tab-add" onclick="tabMgr.addBlankTab()">＋</div>`;
+      },
+
+      addBlankTab() {
+        this.add('新标签页', 'rgba(255,255,255,0.15)', panel => {
+          panel.innerHTML = `
+            <div class="cl-newtab">
+              <div class="cl-newtab-brand">跨境电商经营大脑 · 魔方AI</div>
+              <div class="cl-search-wrap">
+                <i data-lucide="search" style="width:16px;height:16px;" class="cl-search-icon"></i>
+                <span class="cl-search-placeholder">你想优化哪些内容呢？</span>
+              </div>
+              <div class="cl-cards-grid">
+                <div class="cl-feature-card" onclick="openChat(event,'security')">
+                  <div class="cl-card-icon" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.25);">
+                    <i data-lucide="shield-check" style="width:14px;height:14px;color:#34D399;"></i>
+                  </div>
+                  <div class="cl-card-name">创建安全空间</div>
+                  <div class="cl-card-desc">账号隔离，永不被<br>平台关联检测</div>
+                </div>
+                <div class="cl-feature-card" onclick="openChat(event,'products')">
+                  <div class="cl-card-icon" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);">
+                    <i data-lucide="trending-up" style="width:14px;height:14px;color:rgba(255,255,255,0.95);"></i>
+                  </div>
+                  <div class="cl-card-name">智能选品</div>
+                  <div class="cl-card-desc">AI 锁定热度上升<br>高利润爆品 SKU</div>
+                </div>
+                <div class="cl-feature-card" onclick="openChat(event,'kol')">
+                  <div class="cl-card-icon" style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.25);">
+                    <i data-lucide="users" style="width:14px;height:14px;color:#93C5FD;"></i>
+                  </div>
+                  <div class="cl-card-name">达人获客</div>
+                  <div class="cl-card-desc">匹配垂类小达人<br>转化率高 3 倍</div>
+                </div>
+                <div class="cl-feature-card" onclick="openChat(event,'content')">
+                  <div class="cl-card-icon" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.25);">
+                    <i data-lucide="film" style="width:14px;height:14px;color:#FCD34D;"></i>
+                  </div>
+                  <div class="cl-card-name">内容生成</div>
+                  <div class="cl-card-desc">视频脚本·图文<br>多语种一键生成</div>
+                </div>
+              </div>
+            </div>
+          `;
+          lucide.createIcons({ nodes: [panel] });
+        });
+      }
+    };
+
     function openClient() {
       // Blur website behind client
       document.getElementById('website-wrap').classList.add('blurred');
@@ -3482,6 +3695,7 @@
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             body.style.opacity = '1';
+            tabMgr.init();
           });
         });
       }, 420);
@@ -4710,6 +4924,107 @@
       }, 400);
     }
 
+    function openWorkbenchTab() {
+      // Stop avatar pulsing
+      const btn = document.getElementById('cl-user-btn');
+      if (btn) btn.classList.remove('pulsing');
+
+      // Prevent duplicate workbench tab
+      const existing = tabMgr.tabs.find(t => t.label === '我的工作台');
+      if (existing) { tabMgr.setActive(existing.id); return; }
+
+      // Update address bar
+      const urlBar = document.getElementById('cl-url-bar');
+      if (urlBar) urlBar.textContent = 'workbench.mofangai.com · 我的工作台';
+
+      const navItems = [
+        ['trending-up',  '智能选品'],
+        ['edit-3',       'Listing 优化'],
+        ['shield-check', '安全中心'],
+        ['bar-chart-2',  '数据中心'],
+        ['folder',       '资产中心'],
+      ];
+
+      tabMgr.add('我的工作台', 'rgba(130,100,255,0.3)', panel => {
+        panel.innerHTML = `
+          <div style="flex:1;display:flex;overflow:hidden;">
+            <!-- Left nav -->
+            <div style="width:170px;background:rgba(10,10,14,0.85);border-right:1px solid rgba(255,255,255,0.05);padding:14px 10px;display:flex;flex-direction:column;flex-shrink:0;">
+              <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;margin-bottom:14px;">
+                <img src="./logo.svg" style="height:20px;width:auto;">
+                <span style="font-size:13px;font-weight:700;color:var(--text-primary);">魔方AI</span>
+              </div>
+              <div class="wb-nav-item active">
+                <i data-lucide="layout-dashboard" style="width:13px;height:13px;flex-shrink:0;"></i>
+                我的工作台
+              </div>
+              <div style="font-size:9.5px;font-weight:700;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;padding:8px 9px 5px;">我的空间</div>
+              <div class="wb-nav-item">
+                <i data-lucide="shield" style="width:13px;height:13px;flex-shrink:0;color:#34D399;"></i>
+                <span>空间 A · 马来西亚</span>
+              </div>
+              <div class="wb-nav-item" style="margin-bottom:8px;">
+                <i data-lucide="shield-off" style="width:13px;height:13px;flex-shrink:0;"></i>
+                <span style="font-size:11.5px;">空间 B · 市场调研</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);margin:0 8px 8px;"></div>
+              ${navItems.map(([icon, label]) => `
+                <div class="wb-nav-item">
+                  <i data-lucide="${icon}" style="width:13px;height:13px;flex-shrink:0;"></i>
+                  ${label}
+                </div>
+              `).join('')}
+              <div style="margin-top:auto;">
+                <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 8px;"></div>
+                <div class="wb-nav-item">
+                  <i data-lucide="settings" style="width:13px;height:13px;flex-shrink:0;"></i>
+                  设置
+                </div>
+              </div>
+            </div>
+            <!-- Main workbench -->
+            <div style="flex:1;padding:20px 22px;overflow:hidden;display:flex;flex-direction:column;gap:13px;">
+              <div>
+                <div style="font-size:15px;font-weight:700;color:var(--text-primary);letter-spacing:-0.3px;">欢迎回来，潼潼 👋</div>
+                <div style="font-size:11.5px;color:var(--text-dim);margin-top:3px;">第一个月圆满结束 · AI 正在生成月度总结…</div>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:9px;padding:12px 13px;">
+                  <div style="font-size:21px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;line-height:1.1;">¥8,400</div>
+                  <div style="font-size:10.5px;color:var(--text-dim);margin-top:3px;">首月 GMV</div>
+                  <div style="font-size:10.5px;font-weight:600;color:#34D399;">超越 87% 新手</div>
+                </div>
+                <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:9px;padding:12px 13px;">
+                  <div style="font-size:21px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;line-height:1.1;">47</div>
+                  <div style="font-size:10.5px;color:var(--text-dim);margin-top:3px;">成交订单</div>
+                  <div style="font-size:10.5px;font-weight:600;color:#34D399;">↑ 持续增长</div>
+                </div>
+                <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:9px;padding:12px 13px;">
+                  <div style="font-size:21px;font-weight:800;color:#34D399;letter-spacing:-0.5px;line-height:1.1;">0</div>
+                  <div style="font-size:10.5px;color:var(--text-dim);margin-top:3px;">封号次数</div>
+                  <div style="font-size:10.5px;font-weight:600;color:#34D399;">AI 全程守护</div>
+                </div>
+              </div>
+              <div style="flex:1;background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.04);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                <div style="text-align:center;">
+                  <div style="width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.07);border-top-color:rgba(230,230,230,0.7);animation:act5spin 0.85s linear infinite;margin:0 auto 10px;"></div>
+                  <div style="font-size:11.5px;color:var(--text-dim);">AI 正在生成月度报告…</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        lucide.createIcons({ nodes: [panel] });
+
+        // Populate shared chat with workbench messages
+        const msgs = document.getElementById('cl-messages');
+        if (msgs) {
+          msgs.innerHTML = '<div class="cl-msg-label">月度总结</div>';
+          runWorkbenchChat(msgs);
+        }
+      });
+    }
+
     function buildWorkbenchHTML() {
       const navItems = [
         ['trending-up',  '智能选品'],
@@ -4830,8 +5145,8 @@
       `;
     }
 
-    function runWorkbenchChat() {
-      const msgs = document.getElementById('wb-messages');
+    function runWorkbenchChat(msgsEl) {
+      const msgs = msgsEl || document.getElementById('wb-messages');
       if (!msgs) return;
 
       // Block 1: AI safety report (T=400ms)
