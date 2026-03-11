@@ -1404,6 +1404,62 @@
       50%       { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);   transform: scale(1.06); }
     }
 
+    /* ====== ACT 4: TERMINAL SECURITY PROTOCOL ====== */
+    .act4-strip {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(16,185,129,0.04);
+      border: 1px solid rgba(16,185,129,0.10);
+      border-radius: 6px; padding: 9px 14px;
+      font-family: ui-monospace, 'SF Mono', 'Fira Code', monospace;
+      opacity: 0; transform: translateX(-18px);
+      transition: opacity 0.38s ease, transform 0.42s cubic-bezier(0.16,1,0.3,1), border-color 0.3s;
+    }
+    .act4-strip.act4-on   { opacity: 1; transform: translateX(0); }
+    .act4-strip.act4-done { border-color: rgba(16,185,129,0.30); }
+
+    .act4-lbl {
+      font-size: 10px; font-weight: 700; color: rgba(52,211,153,0.8);
+      text-transform: uppercase; letter-spacing: 1px;
+      width: 84px; flex-shrink: 0;
+    }
+    .act4-hex {
+      flex: 1; font-size: 10.5px; color: rgba(255,255,255,0.28);
+      font-family: inherit; overflow: hidden; text-overflow: ellipsis;
+      white-space: nowrap; letter-spacing: 0.3px; transition: color 0.3s;
+    }
+    .act4-hex.locked { color: rgba(255,255,255,0.82); }
+    .act4-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.10); flex-shrink: 0;
+      transition: background 0.35s, box-shadow 0.35s;
+    }
+    .act4-dot.done { background: #10b981; box-shadow: 0 0 9px rgba(16,185,129,0.8); }
+
+    /* Radar rings */
+    @keyframes act4Ring {
+      0%   { transform: scale(0.06); opacity: 0.75; }
+      100% { transform: scale(1);    opacity: 0;    }
+    }
+    .act4-ring {
+      position: absolute; border-radius: 50%;
+      border: 1px solid rgba(16,185,129,0.5);
+      animation: act4Ring 2s ease-out infinite;
+    }
+
+    /* Shield bloom assembly */
+    @keyframes shieldBloom {
+      0%   { opacity:0; transform:scale(0.12) rotate(-14deg); filter:drop-shadow(0 0 0 transparent); }
+      55%  { opacity:1; transform:scale(1.12) rotate(4deg);   filter:drop-shadow(0 0 24px #10b981);  }
+      75%  { transform:scale(0.95) rotate(-2deg); }
+      100% { transform:scale(1)    rotate(0deg);  filter:drop-shadow(0 0 15px #10b981); }
+    }
+    /* Fragment sparkle */
+    @keyframes fragSpark {
+      0%   { opacity:0; transform:scale(0); }
+      40%  { opacity:1; transform:scale(1.3); }
+      100% { opacity:0; transform:scale(0.6) translateY(-10px); }
+    }
+
     /* ====== TikTok Login Mock ====== */
     #tiktok-mock {
       display: none;
@@ -3887,73 +3943,157 @@
     }
 
     function enterAct4() {
-      const overlay = document.getElementById('risk-overlay');
+      document.getElementById('risk-overlay').style.display = 'none';
+      document.getElementById('risk-glow-overlay').classList.remove('risk-red','risk-yellow');
 
-      // Dismiss modal + remove danger glow
-      overlay.style.display = 'none';
-      const glowEl = document.getElementById('risk-glow-overlay');
-      glowEl.classList.remove('risk-red', 'risk-yellow');
-
-      // Fade out client body
       const body = document.getElementById('client-body');
       body.style.transition = 'opacity 0.4s ease';
-      body.style.opacity = '0';
+      body.style.opacity    = '0';
 
       setTimeout(() => {
-        // Replace with Act 4 setup progress screen
         body.innerHTML = `
-          <div style="flex:1;display:flex;align-items:center;justify-content:center;">
-            <div id="act4-setup" style="display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;width:100%;max-width:380px;padding:40px;">
-              <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;">
-                <svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='rgba(230,230,230,0.9)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>
+          <div style="flex:1;background:rgba(7,8,11,0.98);position:relative;overflow:hidden;display:flex;flex-direction:column;">
+            <!-- backdrop glass -->
+            <div style="position:absolute;inset:0;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);pointer-events:none;z-index:0;"></div>
+            <!-- emerald laser scan line -->
+            <div id="a4-scan" style="position:absolute;left:0;right:0;height:1px;background:#10b981;box-shadow:0 0 18px 7px rgba(16,185,129,0.55);z-index:5;top:0;pointer-events:none;opacity:0;transition:opacity 0.25s;"></div>
+            <!-- terminal content -->
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px 52px;position:relative;z-index:1;">
+              <div style="width:100%;max-width:580px;display:flex;flex-direction:column;">
+                <div id="a4h1" style="font-family:ui-monospace,monospace;font-size:10px;color:rgba(16,185,129,0.6);letter-spacing:1.5px;opacity:0;transition:opacity 0.4s;margin-bottom:3px;">▶ MOFANG_SECURITY_DAEMON v2.1</div>
+                <div id="a4h2" style="font-family:ui-monospace,monospace;font-size:9.5px;color:rgba(255,255,255,0.22);letter-spacing:0.7px;opacity:0;transition:opacity 0.4s;margin-bottom:22px;">INITIALIZING ISOLATED ENVIRONMENT · SPOOFING DEVICE FINGERPRINT…</div>
+                <div id="a4-strips" style="display:flex;flex-direction:column;gap:6px;"></div>
+                <div id="a4-radar" style="display:none;margin-top:26px;"></div>
+                <div id="a4-bloom" style="display:none;margin-top:22px;flex-direction:column;align-items:center;gap:14px;"></div>
               </div>
-              <div>
-                <div id="act4-title" style="font-size:18px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px;margin-bottom:6px;">正在创建安全空间…</div>
-                <div id="act4-step" style="font-size:13px;color:var(--text-secondary);line-height:1.7;">初始化隔离环境…</div>
-              </div>
-              <div style="width:100%;background:rgba(255,255,255,0.07);border-radius:4px;height:4px;overflow:hidden;">
-                <div id="act4-bar" style="height:100%;background:linear-gradient(90deg,rgba(200,200,200,0.8),rgba(255,255,255,1));width:0%;border-radius:4px;transition:width 0.45s cubic-bezier(0.16,1,0.3,1);"></div>
-              </div>
-              <div id="act4-hint" style="font-size:11px;color:var(--text-dim);">账号永远不会被平台关联</div>
             </div>
-          </div>
-        `;
+          </div>`;
         body.style.opacity = '1';
-        runAct4Steps();
+        runAct4Terminal();
       }, 420);
     }
 
-    function runAct4Steps() {
-      const steps = [
-        [18,  '初始化浏览器隔离层…'],
-        [36,  '配置独立网络环境…'],
-        [54,  '加密存储账号数据…'],
-        [72,  '同步 TikTok 登录凭据…'],
-        [90,  '校验安全空间完整性…'],
-        [100, '安全空间已就绪 ✓'],
+    function runAct4Terminal() {
+      const rHex = n => Array.from({length:n}, () => Math.floor(Math.random()*16).toString(16)).join('').toUpperCase();
+
+      const STRIPS = [
+        { lbl:'UA',          fin:'Chrome/122.0.0.0 · Win NT 10.0 ✓',  hex:()=>'0x'+rHex(8)+'…' },
+        { lbl:'Resolution',  fin:'1920×1080 → masked 1366×768 ✓',     hex:()=>rHex(4)+'×'+rHex(4) },
+        { lbl:'Timezone',    fin:'UTC+8 · Shanghai → spoofed ✓',      hex:()=>'TZ:0x'+rHex(4) },
+        { lbl:'Canvas FP',   fin:'0x7F3A9B4C → clean spoof ✓',       hex:()=>'0x'+rHex(8) },
+        { lbl:'Language',    fin:'zh-CN,en-US;q=0.9 → OK ✓',        hex:()=>'0x'+rHex(6) },
       ];
+      const STAGGER = 600, HEX_MS = 950;
 
-      const bar     = document.getElementById('act4-bar');
-      const stepEl  = document.getElementById('act4-step');
-      const titleEl = document.getElementById('act4-title');
-      const hintEl  = document.getElementById('act4-hint');
+      // Header fade
+      setTimeout(() => {
+        const h1 = document.getElementById('a4h1');
+        if (h1) h1.style.opacity = '1';
+        setTimeout(() => { const h2=document.getElementById('a4h2'); if(h2) h2.style.opacity='1'; }, 220);
+      }, 120);
 
-      let i = 0;
-      function runStep() {
-        if (i >= steps.length) return;
-        const [pct, text] = steps[i++];
-        bar.style.width  = pct + '%';
-        stepEl.textContent = text;
+      // Laser scan line: travels top→bottom across entire terminal phase
+      const scanLine = document.getElementById('a4-scan');
+      const SCAN_DUR = 540 + STRIPS.length * STAGGER + HEX_MS + 300;
+      setTimeout(() => {
+        if (!scanLine) return;
+        scanLine.style.opacity = '1';
+        scanLine.style.transition = `top ${SCAN_DUR}ms linear, opacity 0.25s`;
+        requestAnimationFrame(() => requestAnimationFrame(() => { scanLine.style.top = '100%'; }));
+      }, 440);
 
-        if (pct === 100) {
-          titleEl.textContent = '安全空间配置完成！';
-          hintEl.innerHTML = '<span style="color:#34D399;font-weight:600;">✓ 封号率 0% · AI 全程守护</span>';
-          setTimeout(startAct5, 1400);
-          return;
-        }
-        setTimeout(runStep, 490 + Math.random() * 160);
+      // Build strip DOM nodes
+      const container = document.getElementById('a4-strips');
+      STRIPS.forEach((s, i) => {
+        const el = document.createElement('div');
+        el.className = 'act4-strip';
+        el.id = 'a4s-' + i;
+        el.innerHTML = `<span class="act4-lbl">${s.lbl}</span><span class="act4-hex" id="a4h-${i}">${s.hex()}</span><span class="act4-dot" id="a4d-${i}"></span>`;
+        container.appendChild(el);
+      });
+
+      // Animate strips with stagger
+      STRIPS.forEach((s, i) => {
+        setTimeout(() => {
+          const strip = document.getElementById('a4s-'+i);
+          if (strip) strip.classList.add('act4-on');
+
+          // Rapid hex cycling
+          const hexEl = document.getElementById('a4h-'+i);
+          const iv = setInterval(() => { if (hexEl) hexEl.textContent = s.hex(); }, 55);
+
+          // Lock to final value after HEX_MS
+          setTimeout(() => {
+            clearInterval(iv);
+            if (hexEl) { hexEl.textContent = s.fin; hexEl.classList.add('locked'); }
+            const dot = document.getElementById('a4d-'+i);
+            if (dot) dot.classList.add('done');
+            const st = document.getElementById('a4s-'+i);
+            if (st) st.classList.add('act4-done');
+            if (i === STRIPS.length - 1) setTimeout(runAct4Radar, 420);
+          }, HEX_MS);
+        }, 540 + i * STAGGER);
+      });
+    }
+
+    function runAct4Radar() {
+      const el = document.getElementById('a4-radar');
+      if (!el) return;
+      el.style.cssText = 'display:flex;align-items:center;gap:28px;margin-top:26px;';
+      el.innerHTML = `
+        <div style="position:relative;width:160px;height:160px;flex-shrink:0;">
+          <div class="act4-ring" style="width:160px;height:160px;top:0;left:0;animation-delay:0s;"></div>
+          <div class="act4-ring" style="width:110px;height:110px;top:25px;left:25px;animation-delay:0.6s;"></div>
+          <div class="act4-ring" style="width:62px;height:62px;top:49px;left:49px;animation-delay:1.2s;"></div>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;background:#10b981;border-radius:50%;box-shadow:0 0 18px rgba(16,185,129,1);"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div id="a4r1" style="font-family:ui-monospace,monospace;font-size:9.5px;font-weight:700;color:rgba(16,185,129,0.6);letter-spacing:1.3px;opacity:0;transition:opacity 0.45s;">IP PURITY SCAN</div>
+          <div id="a4r2" style="font-size:26px;font-weight:800;color:#10b981;letter-spacing:-1px;line-height:1;opacity:0;transition:opacity 0.55s;">99.9% Clean</div>
+          <div id="a4r3" style="font-family:ui-monospace,monospace;font-size:9px;color:rgba(52,211,153,0.5);letter-spacing:1px;opacity:0;transition:opacity 0.55s;">● NO LEAKS DETECTED · PROXY VALIDATED</div>
+        </div>`;
+      setTimeout(() => { const e=document.getElementById('a4r1'); if(e) e.style.opacity='1'; }, 150);
+      setTimeout(() => { const e=document.getElementById('a4r2'); if(e) e.style.opacity='1'; }, 520);
+      setTimeout(() => { const e=document.getElementById('a4r3'); if(e) e.style.opacity='1'; }, 880);
+      setTimeout(runAct4Bloom, 3000);
+    }
+
+    function runAct4Bloom() {
+      const el = document.getElementById('a4-bloom');
+      if (!el) return;
+      el.style.display = 'flex';
+
+      // Shield icon with assembly animation
+      el.innerHTML = `
+        <div style="position:relative;width:88px;height:88px;">
+          <div id="a4shield" style="animation:shieldBloom 0.75s cubic-bezier(0.16,1,0.3,1) both;">
+            <svg width="88" height="88" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.4">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(16,185,129,0.13)"/>
+              <path d="M9 12l2 2 4-4" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div id="a4done" style="text-align:center;opacity:0;transition:opacity 0.5s;">
+          <div style="font-size:16px;font-weight:800;color:var(--text-primary);letter-spacing:-0.4px;">安全空间已创建</div>
+          <div style="font-size:11.5px;color:#34D399;font-weight:600;margin-top:5px;">✓ 封号率 0% · 独立隔离 · AI 全程守护</div>
+        </div>`;
+
+      // Fragment sparkle particles converging toward shield
+      const shieldWrap = el.querySelector('[style*="position:relative"]');
+      for (let p = 0; p < 7; p++) {
+        const angle = (p / 7) * Math.PI * 2;
+        const r = 46;
+        const px = 44 + Math.cos(angle) * r;
+        const py = 44 + Math.sin(angle) * r;
+        const frag = document.createElement('div');
+        frag.style.cssText = `position:absolute;width:5px;height:5px;border-radius:50%;background:#10b981;box-shadow:0 0 8px rgba(16,185,129,0.9);top:${py}px;left:${px}px;margin:-2.5px;animation:fragSpark 0.65s ease ${p*0.075}s both;`;
+        shieldWrap.appendChild(frag);
       }
-      setTimeout(runStep, 320);
+
+      // Reveal done text after shield blooms
+      setTimeout(() => { const d=document.getElementById('a4done'); if(d) d.style.opacity='1'; }, 420);
+      // Auto-segue to Act 5
+      setTimeout(startAct5, 2100);
     }
 
     // ====== ACT 5: AI Auto-Login + Seller Dashboard ======
