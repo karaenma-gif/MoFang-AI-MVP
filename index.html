@@ -1539,6 +1539,39 @@
       70%  { transform: translateX(0);   filter: none; }
     }
 
+    /* ====== ACT 6 STEP 2: CONSTELLATION LINK ====== */
+    @keyframes sonarRing {
+      0%   { transform: scale(0.06); opacity: 0.95; }
+      100% { transform: scale(5.5);  opacity: 0; }
+    }
+    .act6-sonar-ring {
+      position: absolute;
+      width: 52px; height: 52px;
+      left: -26px; top: -26px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(16,185,129,0.52);
+      pointer-events: none;
+      animation: sonarRing 2s ease-out forwards;
+    }
+    @keyframes nodePop {
+      0%   { transform: translate(-50%,-50%) scale(0); }
+      55%  { transform: translate(-50%,-50%) scale(1.22); }
+      80%  { transform: translate(-50%,-50%) scale(0.89); }
+      100% { transform: translate(-50%,-50%) scale(1); }
+    }
+    @keyframes act6NodeGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(52,211,153,0.30), 0 0 0 1px rgba(52,211,153,0.10); }
+      50%       { box-shadow: 0 0 22px rgba(52,211,153,0.88), 0 0 0 2px rgba(52,211,153,0.45); }
+    }
+    @keyframes productNodeGlow {
+      0%, 100% { box-shadow: 0 0 28px rgba(255,255,255,0.18), 0 0 56px rgba(255,255,255,0.07); }
+      50%       { box-shadow: 0 0 48px rgba(255,255,255,0.38), 0 0 90px rgba(255,255,255,0.16); }
+    }
+    @keyframes insightFloat {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-4px); }
+    }
+
     /* ====== TikTok Login Mock ====== */
     #tiktok-mock {
       display: none;
@@ -4818,108 +4851,222 @@
         msgs.scrollTop = msgs.scrollHeight;
       }, 900);
 
-      // Transition browser area to KOL list
-      setTimeout(showAct6KOLList, 1400);
+      // Transition browser area to Constellation Star-Map
+      setTimeout(showAct6StarMap, 1400);
     }
 
-    function showAct6KOLList() {
+    let _act6StarMapData = null;
+
+    function showAct6StarMap() {
       const content = document.getElementById('act5-content');
       if (!content) return;
 
       content.style.transition = 'opacity 0.35s ease';
       content.style.opacity = '0';
 
+      const PX = 50, PY = 44; // product center as % of container
+
+      // Node definitions (12 influencers)
+      const NODES = [
+        { id:0,  x:20, y:20, feat:true,  color:'#93C5FD', lbl:'厨', handle:'@kitchen_hacks_us', fans:'4.2万', rate:'8.3%',  price:'$80'  },
+        { id:1,  x:78, y:28, feat:true,  color:'#34D399', lbl:'居', handle:'@homestyle_daily',  fans:'2.8万', rate:'11.2%', price:'$60'  },
+        { id:2,  x:48, y:80, feat:true,  color:'#FCD34D', lbl:'纳', handle:'@tidyhome_tips',    fans:'6.1万', rate:'7.1%',  price:'$120' },
+        { id:3,  x:8,  y:47, feat:false, color:'rgba(255,255,255,0.28)' },
+        { id:4,  x:90, y:54, feat:false, color:'rgba(255,255,255,0.22)' },
+        { id:5,  x:30, y:70, feat:false, color:'rgba(255,255,255,0.26)' },
+        { id:6,  x:70, y:76, feat:false, color:'rgba(255,255,255,0.22)' },
+        { id:7,  x:6,  y:24, feat:false, color:'rgba(255,255,255,0.20)' },
+        { id:8,  x:88, y:18, feat:false, color:'rgba(255,255,255,0.24)' },
+        { id:9,  x:55, y:10, feat:false, color:'rgba(255,255,255,0.20)' },
+        { id:10, x:14, y:66, feat:false, color:'rgba(255,255,255,0.22)' },
+        { id:11, x:84, y:70, feat:false, color:'rgba(255,255,255,0.20)' },
+      ];
+      _act6StarMapData = { nodes: NODES, px: PX, py: PY };
+
+      // Holographic insight tag positions (manually tuned per node)
+      const TAG_POS = [
+        { x:29, y:11 },  // node 0 → top-right of it
+        { x:42, y:17 },  // node 1 → left and above
+        { x:55, y:68 },  // node 2 → above and right
+      ];
+      const featNodes = NODES.filter(n => n.feat);
+
+      // Build KOL node HTML
+      const nodesHtml = NODES.map(n => {
+        const sz  = n.feat ? 38 : 20;
+        const bw  = n.feat ? '1.5px' : '1px';
+        const ga  = n.feat ? `animation:act6NodeGlow 2.4s ease-in-out ${(n.id+1)*0.28}s infinite;` : '';
+        const bg  = n.feat ? n.color + '1A' : 'rgba(255,255,255,0.04)';
+        const inner = n.feat
+          ? '<div style="width:' + sz + 'px;height:' + sz + 'px;border-radius:50%;background:radial-gradient(circle,' + bg + ' 0%,rgba(0,0,0,0.15) 100%);border:' + bw + ' solid ' + n.color + ';display:flex;align-items:center;justify-content:center;' + ga + '"><span style="font-size:13px;color:' + n.color + ';font-weight:800;line-height:1;">' + n.lbl + '</span></div>'
+          : '<div style="width:' + sz + 'px;height:' + sz + 'px;border-radius:50%;background:' + bg + ';border:' + bw + ' solid ' + n.color + ';opacity:0.6;"></div>';
+        const label = n.feat ? '<div style="text-align:center;font-size:7.5px;color:' + n.color + ';margin-top:3px;font-weight:600;white-space:nowrap;opacity:0.82;">' + n.handle + '</div>' : '';
+        const delay = (1.0 + n.id * 0.14).toFixed(2);
+        return '<div class="act6-kol-node" id="act6-kn-' + n.id + '" style="position:absolute;left:' + n.x + '%;top:' + n.y + '%;z-index:' + (n.feat ? 8 : 5) + ';animation:nodePop 0.52s cubic-bezier(0.34,1.56,0.64,1) ' + delay + 's both;">' + inner + label + '</div>';
+      }).join('');
+
+      // Build insight tags HTML
+      const tagsHtml = featNodes.map((n, i) => {
+        const tp = TAG_POS[i];
+        const animDelay = (0.5 + i * 0.3).toFixed(1);
+        return '<div id="act6-tag-' + n.id + '" style="position:absolute;left:' + tp.x + '%;top:' + tp.y + '%;background:rgba(8,12,22,0.90);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(16,185,129,0.40);border-radius:8px;padding:5px 9px;z-index:14;opacity:0;transition:opacity 0.45s ease;animation:insightFloat 3s ease-in-out ' + animDelay + 's infinite;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.65),0 0 12px rgba(16,185,129,0.12);"><div style="font-size:8.5px;font-weight:700;color:#34D399;letter-spacing:0.3px;">高转化率 · ' + n.rate + '</div><div style="font-size:7.5px;color:rgba(255,255,255,0.40);margin-top:1.5px;">' + n.fans + '粉 · ' + n.price + '/条</div></div>';
+      }).join('');
+
       setTimeout(() => {
-        content.style.cssText = 'flex:1;display:flex;overflow:hidden;';
+        content.style.cssText = 'flex:1;display:flex;overflow:hidden;position:relative;';
         content.innerHTML = `
-          <div style="flex:1;display:flex;flex-direction:column;padding:18px 20px;gap:12px;overflow:hidden;">
+          <div id="act6-starmap" style="position:relative;flex:1;overflow:hidden;background:radial-gradient(ellipse at 50% 44%, rgba(12,18,30,1) 0%, rgba(3,4,8,1) 100%);">
 
-            <!-- Header -->
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-              <div>
-                <div style="font-size:13.5px;font-weight:700;color:var(--text-primary);">AI 达人匹配结果</div>
-                <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">「磁吸调料架」· 已匹配 12 位垂类达人</div>
-              </div>
-              <div style="padding:4px 11px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.22);border-radius:8px;flex-shrink:0;">
-                <span style="font-size:11px;font-weight:700;color:#93C5FD;">转化率 ↑3× · 合作费 ↓80%</span>
-              </div>
+            <!-- Dot grid -->
+            <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.038) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0;"></div>
+
+            <!-- SVG: constellation lines + particles -->
+            <svg id="act6-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1;"></svg>
+
+            <!-- Sonar rings anchored at product center -->
+            <div style="position:absolute;left:${PX}%;top:${PY}%;pointer-events:none;z-index:2;">
+              <div class="act6-sonar-ring" style="animation-delay:0s;"></div>
+              <div class="act6-sonar-ring" style="animation-delay:0.65s;"></div>
+              <div class="act6-sonar-ring" style="animation-delay:1.30s;"></div>
             </div>
 
-            <!-- KOL list -->
-            <div style="display:flex;flex-direction:column;gap:9px;flex:1;min-height:0;overflow:hidden;">
-
-              <!-- KOL 1 -->
-              <div style="display:flex;align-items:center;gap:13px;padding:13px 15px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:11px;animation:fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) 0.05s both;">
-                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(59,130,246,0.25),rgba(59,130,246,0.08));border:1px solid rgba(59,130,246,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i data-lucide="chef-hat" style="width:15px;height:15px;color:#93C5FD;"></i>
-                </div>
-                <div style="flex:1;min-width:0;">
-                  <div style="font-size:12.5px;font-weight:700;color:var(--text-primary);">@kitchen_hacks_us</div>
-                  <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">厨房技巧 · 4.2 万粉 · 互动率 8.3%</div>
-                </div>
-                <div style="text-align:right;flex-shrink:0;">
-                  <div style="font-size:13px;font-weight:700;color:var(--accent-light);">$80</div>
-                  <div style="font-size:10px;color:var(--text-dim);">/ 条</div>
-                </div>
-              </div>
-
-              <!-- KOL 2 -->
-              <div style="display:flex;align-items:center;gap:13px;padding:13px 15px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:11px;animation:fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) 0.18s both;">
-                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(16,185,129,0.25),rgba(16,185,129,0.08));border:1px solid rgba(16,185,129,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i data-lucide="home" style="width:15px;height:15px;color:#34D399;"></i>
-                </div>
-                <div style="flex:1;min-width:0;">
-                  <div style="font-size:12.5px;font-weight:700;color:var(--text-primary);">@homestyle_daily</div>
-                  <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">家居生活 · 2.8 万粉 · 互动率 11.2%</div>
-                </div>
-                <div style="text-align:right;flex-shrink:0;">
-                  <div style="font-size:13px;font-weight:700;color:var(--accent-light);">$60</div>
-                  <div style="font-size:10px;color:var(--text-dim);">/ 条</div>
-                </div>
-              </div>
-
-              <!-- KOL 3 -->
-              <div style="display:flex;align-items:center;gap:13px;padding:13px 15px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:11px;animation:fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) 0.31s both;">
-                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(245,158,11,0.25),rgba(245,158,11,0.08));border:1px solid rgba(245,158,11,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i data-lucide="sparkles" style="width:15px;height:15px;color:#FCD34D;"></i>
-                </div>
-                <div style="flex:1;min-width:0;">
-                  <div style="font-size:12.5px;font-weight:700;color:var(--text-primary);">@tidyhome_tips</div>
-                  <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">整理收纳 · 6.1 万粉 · 互动率 7.1%</div>
-                </div>
-                <div style="text-align:right;flex-shrink:0;">
-                  <div style="font-size:13px;font-weight:700;color:var(--accent-light);">$120</div>
-                  <div style="font-size:10px;color:var(--text-dim);">/ 条</div>
-                </div>
-              </div>
-
-              <!-- More -->
-              <div style="display:flex;align-items:center;justify-content:center;padding:11px;border:1px dashed rgba(255,255,255,0.07);border-radius:11px;animation:fadeInUp 0.35s cubic-bezier(0.16,1,0.3,1) 0.42s both;">
-                <span style="font-size:11.5px;color:var(--text-dim);">还有 9 位达人 · 已按转化潜力排序</span>
-              </div>
-
+            <!-- Product "Core" node -->
+            <div id="act6-pnode" style="position:absolute;left:${PX}%;top:${PY}%;transform:translate(-50%,-50%);z-index:10;">
+              <div style="width:54px;height:54px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.20) 0%,rgba(255,255,255,0.05) 100%);border:1.5px solid rgba(255,255,255,0.30);display:flex;align-items:center;justify-content:center;font-size:22px;animation:productNodeGlow 2.8s ease-in-out infinite;">🧲</div>
+              <div style="text-align:center;font-size:8px;color:rgba(255,255,255,0.50);margin-top:5px;font-weight:600;letter-spacing:0.3px;white-space:nowrap;">磁吸调料架</div>
             </div>
 
-            <!-- CTA -->
-            <button id="kol-launch-btn" onclick="act6LaunchKOL()" style="width:100%;padding:13px;background:rgba(230,230,230,1);border:none;border-radius:10px;font-size:14px;font-weight:600;color:rgba(47,48,49,1);cursor:pointer;box-shadow:inset 0 1px 0.4px rgba(255,255,255,1),inset 0 -1px 0.4px rgba(0,0,0,0.2),0 0 14px rgba(255,255,255,0.15);letter-spacing:0.2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity 0.18s;animation:fadeInUp 0.4s cubic-bezier(0.16,1,0.3,1) 0.5s both;">
-              <i data-lucide="send" style="width:14px;height:14px;"></i>
-              一键发起合作
-            </button>
+            <!-- 12 Influencer Nodes -->
+            ${nodesHtml}
+
+            <!-- Holographic Insight Tags (hidden, revealed by JS) -->
+            ${tagsHtml}
+
+            <!-- Bottom CTA -->
+            <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;display:flex;flex-direction:column;align-items:center;gap:7px;">
+              <div style="font-size:10px;color:rgba(255,255,255,0.26);text-align:center;white-space:nowrap;">已匹配 <span style="color:#34D399;font-weight:700;">12</span> 位垂类达人 &nbsp;·&nbsp; 转化率 ↑3× &nbsp;·&nbsp; 合作费 ↓80%</div>
+              <button id="kol-launch-btn" onclick="act6LaunchKOL()" style="padding:11px 36px;background:rgba(230,230,230,0.95);border:none;border-radius:10px;font-size:13.5px;font-weight:600;color:rgba(47,48,49,1);cursor:pointer;box-shadow:inset 0 1px 0.4px rgba(255,255,255,1),0 0 20px rgba(255,255,255,0.12);letter-spacing:0.2px;display:flex;align-items:center;gap:8px;opacity:0;transition:opacity 0.5s ease;pointer-events:none;">
+                <i data-lucide="send" style="width:13px;height:13px;"></i>一键发起合作
+              </button>
+            </div>
 
           </div>
         `;
+        lucide.createIcons({ nodes: [content] });
         content.style.transition = 'opacity 0.4s ease';
         content.style.opacity = '1';
-        lucide.createIcons({ nodes: [content] });
+
+        // Launch the star-map sequence
+        _act6StarMapSequence(NODES, PX, PY);
       }, 360);
+    }
+
+    function _act6StarMapSequence(NODES, PX, PY) {
+      // ── Phase 1: Draw constellation lines (1.8 s – nodes start at 1.0 s) ──
+      setTimeout(() => {
+        const svgEl = document.getElementById('act6-svg');
+        if (!svgEl) return;
+
+        NODES.forEach((n, i) => {
+          const len    = Math.hypot(n.x - PX, n.y - PY);
+          const stroke = n.feat ? 'rgba(52,211,153,0.42)' : 'rgba(255,255,255,0.10)';
+          const sw     = n.feat ? '0.36' : '0.18';
+
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', PX); line.setAttribute('y1', PY);
+          line.setAttribute('x2', n.x); line.setAttribute('y2', n.y);
+          line.setAttribute('stroke', stroke);
+          line.setAttribute('stroke-width', sw);
+          line.style.strokeDasharray  = len;
+          line.style.strokeDashoffset = len;
+          line.style.transition = `stroke-dashoffset 0.9s cubic-bezier(0.4,0,0.2,1) ${i * 0.065}s`;
+          svgEl.appendChild(line);
+
+          line.getBoundingClientRect(); // force reflow → trigger transition
+          line.style.strokeDashoffset = '0';
+        });
+
+        // ── Phase 2: Traveling particles (1.5 s after lines start) ──────────
+        setTimeout(() => {
+          const svg2 = document.getElementById('act6-svg');
+          if (!svg2) return;
+
+          NODES.forEach(n => {
+            const pt = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            pt.setAttribute('r', n.feat ? '0.9' : '0.42');
+            pt.setAttribute('fill', n.feat ? 'rgba(52,211,153,0.95)' : 'rgba(255,255,255,0.55)');
+
+            const motion = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+            motion.setAttribute('dur', n.feat ? '1.6s' : '3.0s');
+            motion.setAttribute('repeatCount', 'indefinite');
+            motion.setAttribute('path', 'M ' + PX + ',' + PY + ' L ' + n.x + ',' + n.y);
+            pt.appendChild(motion);
+            svg2.appendChild(pt);
+          });
+        }, 1500);
+
+      }, 1800);
+
+      // ── Phase 3: Reveal insight tags (2.5 s, stagger 220 ms) ─────────────
+      setTimeout(() => {
+        [0, 1, 2].forEach((id, i) => {
+          setTimeout(() => {
+            const tag = document.getElementById('act6-tag-' + id);
+            if (tag) tag.style.opacity = '1';
+          }, i * 220);
+        });
+      }, 2500);
+
+      // ── Phase 4: Enable CTA (3.2 s) ──────────────────────────────────────
+      setTimeout(() => {
+        const btn = document.getElementById('kol-launch-btn');
+        if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+      }, 3200);
     }
 
     function act6LaunchKOL() {
       const btn = document.getElementById('kol-launch-btn');
       if (btn) {
         btn.disabled = true;
-        btn.style.opacity = '0.45';
-        btn.style.cursor = 'default';
+        btn.style.opacity = '0.4';
+        btn.style.cursor  = 'default';
+        btn.style.pointerEvents = 'none';
+      }
+
+      // ── Flash all 12 nodes simultaneously (staggered 28 ms) ─────────────
+      document.querySelectorAll('.act6-kol-node').forEach((node, i) => {
+        const circle = node.querySelector('div');
+        if (!circle) return;
+        setTimeout(() => {
+          circle.style.transition = 'filter 0.12s ease, box-shadow 0.12s ease';
+          circle.style.filter     = 'brightness(4) drop-shadow(0 0 10px rgba(52,211,153,0.95))';
+          circle.style.boxShadow  = '0 0 28px rgba(52,211,153,0.9)';
+          setTimeout(() => { circle.style.filter = ''; circle.style.boxShadow = ''; }, 380);
+        }, i * 28);
+      });
+
+      // ── Surge: 3 fast particles per line ("Outreach Signal") ─────────────
+      if (_act6StarMapData) {
+        const { nodes: NODES, px: PX, py: PY } = _act6StarMapData;
+        const svgEl = document.getElementById('act6-svg');
+        if (svgEl) {
+          NODES.forEach((n, ni) => {
+            for (let p = 0; p < 3; p++) {
+              const surge  = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+              surge.setAttribute('r', n.feat ? '1.3' : '0.65');
+              surge.setAttribute('fill', n.feat ? 'rgba(52,211,153,0.92)' : 'rgba(255,255,255,0.72)');
+              const motion = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+              motion.setAttribute('dur', '0.38s');
+              motion.setAttribute('begin', (ni * 0.025 + p * 0.12).toFixed(3) + 's');
+              motion.setAttribute('repeatCount', '1');
+              motion.setAttribute('fill', 'remove');
+              motion.setAttribute('path', 'M ' + PX + ',' + PY + ' L ' + n.x + ',' + n.y);
+              surge.appendChild(motion);
+              svgEl.appendChild(surge);
+              setTimeout(() => { if (surge.parentNode) surge.remove(); }, 1600);
+            }
+          });
+        }
       }
 
       const msgs = document.getElementById('act5-messages');
