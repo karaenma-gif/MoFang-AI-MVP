@@ -1364,39 +1364,42 @@
 
     .cl-tab-panel.hidden { display: none; }
 
-    /* ====== ACT 3: RISK GLOW STATES ====== */
-    .cl-browser-area {
-      transition: box-shadow 0.55s ease;
+    /* ====== ACT 3: RISK GLOW STATES — inner-edge overlay ====== */
+    #client-body {
+      position: relative; /* anchor for risk-glow-overlay */
     }
 
-    .cl-browser-area.risk-yellow {
-      box-shadow:
-        0 0 0 2px rgba(245, 158, 11, 0.78),
-        0 0 20px 5px rgba(245, 158, 11, 0.28),
-        0 0 50px 14px rgba(245, 158, 11, 0.1);
+    #risk-glow-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      transition: opacity 0.55s ease;
     }
 
-    .cl-browser-area.risk-red {
-      box-shadow:
-        0 0 0 2px rgba(239, 68, 68, 0.92),
-        0 0 22px 6px rgba(239, 68, 68, 0.44),
-        0 0 65px 18px rgba(239, 68, 68, 0.18);
-      animation: dangerPulse 1.7s ease-in-out infinite;
+    #risk-glow-overlay.risk-yellow {
+      opacity: 1;
+      background:
+        linear-gradient(to right,  rgba(234,179,8,0.45) 0%, transparent 80px),
+        linear-gradient(to left,   rgba(234,179,8,0.45) 0%, transparent 80px),
+        linear-gradient(to bottom, rgba(234,179,8,0.45) 0%, transparent 80px),
+        linear-gradient(to top,    rgba(234,179,8,0.45) 0%, transparent 80px);
     }
 
-    @keyframes dangerPulse {
-      0%, 100% {
-        box-shadow:
-          0 0 0 2px rgba(239, 68, 68, 0.92),
-          0 0 22px 6px rgba(239, 68, 68, 0.44),
-          0 0 65px 18px rgba(239, 68, 68, 0.18);
-      }
-      50% {
-        box-shadow:
-          0 0 0 2.5px rgba(239, 68, 68, 1),
-          0 0 32px 12px rgba(239, 68, 68, 0.60),
-          0 0 90px 28px rgba(239, 68, 68, 0.28);
-      }
+    #risk-glow-overlay.risk-red {
+      opacity: 1;
+      background:
+        linear-gradient(to right,  rgba(239,68,68,0.65) 0%, transparent 80px),
+        linear-gradient(to left,   rgba(239,68,68,0.65) 0%, transparent 80px),
+        linear-gradient(to bottom, rgba(239,68,68,0.65) 0%, transparent 80px),
+        linear-gradient(to top,    rgba(239,68,68,0.65) 0%, transparent 80px);
+      animation: glowPulse 1.2s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.5; }
+      50%       { opacity: 1;   }
     }
 
     /* ====== TikTok Login Mock ====== */
@@ -3176,6 +3179,9 @@
         </div>
       </div><!-- /cl-chat-side -->
 
+      <!-- Act 3: inner-edge glow overlay (pointer-events:none) -->
+      <div id="risk-glow-overlay"></div>
+
     </div><!-- /client-body -->
 
     <!-- Act 3: Risk Warning Modal (absolute within #client) -->
@@ -3779,7 +3785,6 @@
       act3Started = true;
 
       const urlBar = document.getElementById('cl-url-bar');
-      const browserArea = document.querySelector('.cl-browser-area');
 
       // Step 1: Type "tiktok.com" in URL bar char by char
       const targetUrl = 'tiktok.com';
@@ -3805,7 +3810,7 @@
             }));
 
             // Yellow warning glow
-            browserArea.classList.add('risk-yellow');
+            document.getElementById('risk-glow-overlay').classList.add('risk-yellow');
             lucide.createIcons();
 
             // After short pause, start credential fill
@@ -3822,7 +3827,6 @@
       const passEl   = document.getElementById('tk-pass-val');
       const passWrap = document.getElementById('tk-pass-wrap');
       const loginBtn = document.getElementById('tk-login-btn');
-      const browserArea = document.querySelector('.cl-browser-area');
 
       // Type phone number
       const phone = '188 8888 8888';
@@ -3834,8 +3838,9 @@
           setTimeout(typePhone, 68 + Math.random() * 52);
         } else {
           // Phone done → escalate to red glow
-          browserArea.classList.remove('risk-yellow');
-          browserArea.classList.add('risk-red');
+          const glowEl = document.getElementById('risk-glow-overlay');
+          glowEl.classList.remove('risk-yellow');
+          glowEl.classList.add('risk-red');
 
           // Reveal password field
           passWrap.style.transition = 'opacity 0.35s ease';
@@ -3878,11 +3883,11 @@
 
     function enterAct4() {
       const overlay = document.getElementById('risk-overlay');
-      const browserArea = document.querySelector('.cl-browser-area');
 
       // Dismiss modal + remove danger glow
       overlay.style.display = 'none';
-      browserArea.classList.remove('risk-red', 'risk-yellow');
+      const glowEl = document.getElementById('risk-glow-overlay');
+      glowEl.classList.remove('risk-red', 'risk-yellow');
 
       // Fade out client body
       const body = document.getElementById('client-body');
